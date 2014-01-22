@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ROM Patcher</string>
+    <string name="cantRead">folder can\'t be read!</string>
+    <string name="choose_rom">Choose ROM</string>
+    <string name="choose_patch">Choose patch</string>
+    <string name="patch">Patch</string>
+    <string name="bkup_rom">Backup ROM</string>
+    <string name="bkup_rom_desc">Keeps original ROM file as ROMname.bak after patching</string>
+    <string name="rename1">Rename patched ROM</string>
+    <string name="rename2">Rename patched ROM to: </string>
+    <string name="rename_desc">Renames ROM after patching to filename typed below</string>
+    <string name="warning">Warning</string>
+    <string name="warning_desc">A backup or output file already exists. Overwrite?</string>
+    <string name="nopatch">Patch not applied</string>
+    <string name="wait">Please wait</string>
+    <string name="wait_desc">Patching rom...</string>
+    <string name="success">Patching successful.</string>
+    <string name="fnf">File not found.</string>
+    <!-- UPS Errors -->
+    <string name="upsNegativeOne">UPS: Input file cannot be opened.</string>
+    <string name="upsNegativeTwo">UPS: Output file cannot be opened.</string>
+    <string name="upsNegativeThree">UPS: Patch file cannot be opened.</string>
+    <string name="upsNegativeFour">UPS: Patch file size is too small.</string>
+    <string name="upsNegativeFive">UPS: Patch CRC32 is invalid.</string>
+    <string name="upsNegativeSix">UPS: Patch header is invalid.</string>
+    <string name="upsNegativeSeven">UPS: Input file size and/or CRC32 invalid.</string>
+    <string name="upsDefault">UPS: Unknown error: </string>
+    <!-- End UPS Errors -->
+    <!-- XDELTA Errors -->
+    <string name="xdeltaNegativeSeventeenThousandSevenHundredTen">XDELTA: Internal error.</string>
+	<string name="xdeltaNegativeSeventeenThousandSevenHundredEleven">XDELTA: Invalid config.</string>
+	<string name="xdeltaNegativeSeventeenThousandSevenHundredTwelve">XDELTA: Input/output error. </string>
+	<string name="xdeltaDefault">XDELTA: Unknown error: </string>
+	<!-- End XDELTA Errors -->
+	<!-- BPS Errors -->
+	<string name="bpsOne">BPS: Broken error code.</string>
+	<string name="bpsNegativeOne">BPS: Patch is too small.</string>
+	<string name="bpsNegativeTwo">BPS: Patch header is invalid.</string>
+	<string name="bpsNegativeThree">BPS: Source file is too small.</string>
+	<string name="bpsNegativeFour">BPS: Target file is too small.</string>
+	<string name="bpsNegativeFive">BPS: Source checksum is invalid.</string>
+	<string name="bpsNegativeSix">BPS: Patch checksum is invalid.</string>
+	<string name="bpsNegativeSeven">BPS: Patch checksum is invalid.</string>
+	<string name="bpsNegativeEight">BPS: Unknown patching error: </string>
+	<string name="bpsDefault">BPS: Unknown error: </string>
+	<!-- End BPS Errors -->
+	<!-- BSDIFF Errors -->
+	<string name="bsdiffOne">BSDIFF: Read/Write error.</string>
+	<string name="bsdiffTwo">BSDIFF: Corrupt patch.</string>
+	<string name="bsdiffDefault">BSDIFF: Unknown error: </string>
+	<!-- End BSDIFF Errors -->
+	<!-- PPF Errors -->
+	<string name="ppfOne">PPF: Broken error code.</string>
+	<string name="ppfNegativeOne">PPF2: Incorrect file size.</string>
+	<string name="ppfNegativeTwo">PPF2: Binblock/Patchvalidation failed.</string>
+	<string name="ppfNegativeThree">PPF3: Binblock/Patchvalidation failed.</string>
+	<string name="ppfNegativeFour">PPF3: No undo data available. (you shouldn\'t be seeing this)</string>
+	<string name="ppfDefault">PPF: Unknown error: </string>
+	<!-- End PPF Errors -->
+	<!-- IPS Errors -->
+	<string name="ipsOne">IPS: Patching stopped for unknown reason.</string>
+	<string name="ipsNegativeOne">IPS: Error.</string>
+	<string name="ipsNegativeTwo">IPS: File type error.</string>
+	<string name="ipsNegativeThree">IPS: File opening error.</string>
+	<string name="ipsNegativeFour">IPS: File saving error.</string>
+	<string name="ipsNegativeFive">IPS: File read error.</string>
+	<string name="ipsNegativeSix">IPS: Processing error.</string>
+	<string name="ipsNegativeSeven">IPS: Offset error.</string>
+	<string name="ipsDefault">IPS: Unknown error: </string>
+	<!-- End IPS Errors -->
+	<!-- IPS32 Errors -->
+	<string name="ips32One">IPS32: Patching stopped for unknown reason.</string>
+	<string name="ips32NegativeOne">IPS32: Error.</string>
+	<string name="ips32NegativeTwo">IPS32: File type error.</string>
+	<string name="ips32NegativeThree">IPS32: File opening error.</string>
+	<string name="ips32NegativeFour">IPS32: File saving error.</string>
+	<string name="ips32NegativeFive">IPS32: File read error.</string>
+	<string name="ips32NegativeSix">IPS32: Processing error.</string>
+	<string name="ips32NegativeSeven">IPS32: Offset error.</string>
+	<string name="ips32Default">IPS32: Unknown error: </string>
+	<!-- End IPS32 Errors -->
+	<string name="errorDefault">Patch type invalid.</string>
+</resources>
