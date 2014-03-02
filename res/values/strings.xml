@@ -9,10 +9,14 @@
     <string name="bkup_rom_desc">Keeps original ROM file as ROMname.bak after patching</string>
     <string name="rename1">Rename patched ROM</string>
     <string name="rename2">Rename patched ROM to: </string>
-    <string name="rename_desc">Renames ROM after patching to filename typed below</string>
+    <string name="fileExt">Automatically add file extension</string>
+    <string name="rename_desc">Renames ROM after patching to filename typed below. The file extension checkbox will automatically add the file extension of the original file to the filename typed below.</string>
+    <string name="ignoreChks">Ignore checksum errors</string>
+    <string name="ignoreChks_desc">Ignore file verification errors. If a checksum, CRC32, or validation error appears, try checking this box. This setting may break your files</string>
     <string name="warning">Warning</string>
-    <string name="warning_desc">A backup or output file already exists. Overwrite?</string>
-    <string name="nopatch">Patch not applied</string>
+    <string name="warning_desc">A backup, output, or required temporary file already exists. Overwrite?</string>
+    <string name="zip_warning_desc">The file you are trying to patch looks like a zip file. You probably want to extract it first. Patch anyway?</string>
+    <string name="nopatch">Patching canceled</string>
     <string name="wait">Please wait</string>
     <string name="wait_desc">Patching rom...</string>
     <string name="success">Patching successful.</string>
@@ -27,12 +31,27 @@
     <string name="upsNegativeSeven">UPS: Input file size and/or CRC32 invalid.</string>
     <string name="upsDefault">UPS: Unknown error: </string>
     <!-- End UPS Errors -->
-    <!-- XDELTA Errors -->
-    <string name="xdeltaNegativeSeventeenThousandSevenHundredTen">XDELTA: Internal error.</string>
-	<string name="xdeltaNegativeSeventeenThousandSevenHundredEleven">XDELTA: Invalid config.</string>
-	<string name="xdeltaNegativeSeventeenThousandSevenHundredTwelve">XDELTA: Input/output error. </string>
-	<string name="xdeltaDefault">XDELTA: Unknown error: </string>
-	<!-- End XDELTA Errors -->
+	<!-- XDELTA1 Errors -->
+	<string name="xdelta1Two">XDELTA1: Couldn\'t initialize edsio.</string>
+	<string name="xdelta1Three">XDELTA1: Illegal maxmem arguments.</string>
+	<string name="xdelta1Four">XDELTA1: Illegal arguments.</string>
+	<string name="xdelta1Five">XDELTA1: Wrong number of arguments (5).</string>
+	<string name="xdelta1Six">XDELTA1: Wrong number of arguments (6).</string>
+	<string name="xdelta1Seven">XDELTA1: Could not process patch.</string>
+	<string name="xdelta1Eight">XDELTA1: Opening output file failed.</string>
+	<string name="xdelta1Nine">XDELTA1: Compression error.</string>
+	<string name="xdelta1Ten">XDELTA1: Patch seek error.</string>
+	<string name="xdelta1Eleven">XDELTA1: File length error.</string>
+	<string name="xdelta1Twelve">XDELTA1: Apply delta error.</string>
+	<string name="xdelta1Thirteen">XDELTA1: Closing error.</string>
+    <string name="xdelta1Default">XDELTA1: Unknown error: </string>
+	<!-- End XDELTA1 Errors -->
+    <!-- XDELTA3 Errors -->
+    <string name="xdelta3NegativeSeventeenThousandSevenHundredTen">XDELTA3: Internal error.</string>
+	<string name="xdelta3NegativeSeventeenThousandSevenHundredEleven">XDELTA3: Invalid config.</string>
+	<string name="xdelta3NegativeSeventeenThousandSevenHundredTwelve">XDELTA3: Input/output error. </string>
+	<string name="xdelta3Default">XDELTA3: Unknown error: </string>
+	<!-- End XDELTA3 Errors -->
 	<!-- BPS Errors -->
 	<string name="bpsOne">BPS: Broken error code.</string>
 	<string name="bpsNegativeOne">BPS: Patch is too small.</string>
@@ -80,5 +99,19 @@
 	<string name="ips32NegativeSeven">IPS32: Offset error.</string>
 	<string name="ips32Default">IPS32: Unknown error: </string>
 	<!-- End IPS32 Errors -->
+	<!-- ECM Errors -->
+	<string name="ecmOne">ECM: Type count error.</string>
+	<string name="ecmTwo">ECM: Sector/literal error.</string>
+	<string name="ecmThree">ECM: ECM error.</string>
+	<string name="ecmFour">ECM: UNECM error.</string>
+	<string name="ecmFive">ECM: Usage error.</string>
+	<string name="ecmDefault">ECM: Unknown error: </string>
+	<!-- End ECM Errors -->
+	<!-- DPS Errors -->
+	<string name="dpsNegativeOne">DPS: Bad parameters.</string>
+	<string name="dpsNegativeTwo">DPS: File size error.</string>
+	<string name="dpsNegativeThree">DPS: Patching successful, but patch is unstable.</string>
+	<string name="dpsDefault">DPS: Unknown error: </string>
+	<!-- End ECM Errors -->
 	<string name="errorDefault">Patch type invalid.</string>
 </resources>

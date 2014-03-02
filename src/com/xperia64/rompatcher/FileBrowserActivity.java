@@ -28,6 +28,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -39,7 +40,7 @@ public class FileBrowserActivity extends ListActivity {
 	private List<String> path = null;
 	private String rootsd=Environment.getExternalStorageDirectory().getAbsolutePath();
 	private String tmpitem="ROOT";
-	private String extensions = "*.ips*.ups*.xdelta*.bps*.bsdiff*.ppf*";
+	private String extensions = "*.ips*.ups*.xdelta*.xdelta3*.vcdiff*.bps*.bsdiff*.ppf*.patch*.dps*";
 	TextView myPath;
 
 
@@ -48,6 +49,14 @@ public class FileBrowserActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate( savedInstanceState );
 		setContentView(R.layout.filebrowser);
+		File ff = new File(rootsd);
+		if(ff==null||TextUtils.isEmpty(rootsd))
+		{
+			rootsd="/";
+		}else if(!ff.exists()||!ff.canRead()||ff.isFile())
+		{
+			rootsd="/";
+		}
 		getDir(rootsd);
 	}
 
@@ -78,12 +87,13 @@ public class FileBrowserActivity extends ListActivity {
 		path = new ArrayList<String>();   
 		File f = new File(dirPath);
 		File[] files = f.listFiles(); 
-
+		if(files != null)
+		{
 		if (files.length>0){
-			if(files != null)
-			{
+			
+				System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
 				Arrays.sort(files, new FileComparator());
-			}
+			
 
 			if(!dirPath.equals("/"))
 			{
@@ -136,7 +146,9 @@ public class FileBrowserActivity extends ListActivity {
 				new ArrayAdapter<String>(this, R.layout.row, item);
 
 		setListAdapter(fileList);
-
+		}else{
+			getDir("/");
+		}
 	}
 
 	@Override

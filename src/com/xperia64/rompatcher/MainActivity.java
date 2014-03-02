@@ -54,11 +54,14 @@ public class MainActivity extends Activity {
 
 	public static native int ipsPatchRom(String romPath, String patchPath); 
 	public static native int ips32PatchRom(String romPath, String patchPath); 
-	public static native int upsPatchRom(String romPath, String patchPath, String outputFile);
-	public static native int xdeltaPatchRom(String romPath, String patchPath, String outputFile);
+	public static native int upsPatchRom(String romPath, String patchPath, String outputFile, int jignoreChecksum);
+	public static native int xdelta1PatchRom(String romPath, String patchPath, String outputFile);
+	public static native int ecmPatchRom(String romPath, String outFile, int bkup);
+	public static native int dpsPatchRom(String romPath, String patchPath, String outFile);
+	public static native int xdelta3PatchRom(String romPath, String patchPath, String outputFile);
 	public static native int bsdiffPatchRom(String romPath, String patchPath, String outputFile);
-	public static native int bpsPatchRom(String romPath, String patchPath, String outputFile);
-	public static native int ppfPatchRom(String romPath, String patchPath);
+	public static native int bpsPatchRom(String romPath, String patchPath, String outputFile, int jignoreChecksum);
+	public static native int ppfPatchRom(String romPath, String patchPath, int jignoreChecksum);
 	Context staticThis;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +116,48 @@ public class MainActivity extends Activity {
 		catch( UnsatisfiedLinkError e) {
 			Log.e("Bad:","Cannot grab ips32patcher!");
 		}
+		try {
+    		System.loadLibrary("glib-2.0");  
+    	}
+        catch( UnsatisfiedLinkError e) {
+        	Log.e("Bad:","Cannot grab glib-2.0!");
+        }
+		try {
+    		System.loadLibrary("gmodule-2.0");  
+    	}
+        catch( UnsatisfiedLinkError e) {
+        	Log.e("Bad:","Cannot grab gmodule-2.0!");
+        }
+		try {
+    		System.loadLibrary("edsio");  
+    	}
+        catch( UnsatisfiedLinkError e) {
+        	Log.e("Bad:","Cannot grab edsio!");
+        }
+		try {
+			System.loadLibrary("xdelta1patcher");  
+		}
+		catch( UnsatisfiedLinkError e) {
+			Log.e("Bad:","Cannot grab ips32patcher!");
+		}
+		try {
+			System.loadLibrary("ips32patcher");  
+		}
+		catch( UnsatisfiedLinkError e) {
+			Log.e("Bad:","Cannot grab ips32patcher!");
+		}
+		try {
+			System.loadLibrary("ecmpatcher");  
+		}
+		catch( UnsatisfiedLinkError e) {
+			Log.e("Bad:","Cannot grab ecmpatcher!");
+		}
+		try {
+			System.loadLibrary("dpspatcher");  
+		}
+		catch( UnsatisfiedLinkError e) {
+			Log.e("Bad:","Cannot grab dpspatcher!");
+		}
 		setContentView(R.layout.main);
 		final Button romButton = (Button) findViewById(R.id.romButton);
 		romButton.setOnClickListener(new View.OnClickListener() {
@@ -164,8 +209,25 @@ public class MainActivity extends Activity {
 			    dialog.show();
 			}
 		});
+		final ImageButton chkHelp = (ImageButton) findViewById(R.id.ignoreHelp);
+		chkHelp.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				AlertDialog dialog = new AlertDialog.Builder(staticThis).create();
+			    dialog.setTitle(getResources().getString(R.string.ignoreChks));
+			    dialog.setMessage(getResources().getString(R.string.ignoreChks_desc));
+			    dialog.setCancelable(true);
+			    dialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+			        public void onClick(DialogInterface dialog, int buttonId) {
+
+			        }
+			    });
+			    dialog.show();
+			}
+		});
 		final CheckBox c = (CheckBox) findViewById(R.id.backupCheckbox);
 		final CheckBox d = (CheckBox) findViewById(R.id.altNameCheckbox);
+		final CheckBox r = (CheckBox) findViewById(R.id.ignoreCRC);
+		final CheckBox e = (CheckBox) findViewById(R.id.fileExtCheckbox);
 		final EditText ed = (EditText) findViewById(R.id.txtOutFile);
 		InputFilter filter = new InputFilter() { 
 	        public CharSequence filter(CharSequence source, int start, int end, 
@@ -199,24 +261,57 @@ public class MainActivity extends Activity {
 				if(((CheckBox)v).isChecked())
 				{
 					ed.setEnabled(true);
+					e.setEnabled(true);
 				}else{				
+					e.setEnabled(false);
 					ed.setEnabled(false);
 				}
 			}});
 		final Button applyButton = (Button) findViewById(R.id.applyPatch);
 		applyButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				if(new File(Globals.fileToPatch+".bak").exists()||(new File(Globals.fileToPatch.substring(0,Globals.fileToPatch.lastIndexOf('/')+1)+ed.getText().toString()).exists()&&d.isChecked()&&c.isChecked()))
+				// Warn about patching archives.
+				if(Globals.fileToPatch.toLowerCase(Locale.US).endsWith(".7z")||Globals.fileToPatch.toLowerCase(Locale.US).endsWith(".zip")||Globals.fileToPatch.toLowerCase(Locale.US).endsWith(".rar"))
 				{
 					AlertDialog dialog = new AlertDialog.Builder(staticThis).create();
 				    dialog.setTitle(getResources().getString(R.string.warning));
-				    dialog.setMessage(getResources().getString(R.string.warning_desc));
+				    dialog.setMessage(getResources().getString(R.string.zip_warning_desc));
 				    dialog.setCancelable(false);
 				    dialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(android.R.string.yes), new DialogInterface.OnClickListener() {
 				        public void onClick(DialogInterface dialog, int buttonId) {
-				            new File(Globals.fileToPatch+".bak").delete();
-				            new File(Globals.fileToPatch.substring(0,Globals.fileToPatch.lastIndexOf('/')+1)+ed.getText().toString()).delete();
-				            patch(c.isChecked(),d.isChecked(),ed.getText().toString());
+				        	// Just try to interpret the following if statement. I dare you.
+				        	if(new File(Globals.fileToPatch+".bak").exists()||new File(Globals.fileToPatch+".new").exists()||(new File(Globals.fileToPatch.substring(0,Globals.fileToPatch.lastIndexOf('/')+1)+ed.getText().toString()+((e.isChecked())?((Globals.fileToPatch.lastIndexOf('.')>-1)?Globals.fileToPatch.substring(Globals.fileToPatch.lastIndexOf('.'),Globals.fileToPatch.length()):""):"")).exists()&&d.isChecked()&&c.isChecked()))
+							{
+								AlertDialog dialog2 = new AlertDialog.Builder(staticThis).create();
+							    dialog2.setTitle(getResources().getString(R.string.warning));
+							    dialog2.setMessage(getResources().getString(R.string.warning_desc));
+							    dialog2.setCancelable(false);
+							    dialog2.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(android.R.string.yes), new DialogInterface.OnClickListener() {
+							        public void onClick(DialogInterface dialog, int buttonId) {
+							            new File(Globals.fileToPatch+".bak").delete();
+							            new File(Globals.fileToPatch+".new").delete();
+							            new File(Globals.fileToPatch.substring(0,Globals.fileToPatch.lastIndexOf('/')+1)+ed.getText().toString()+((e.isChecked())?((Globals.fileToPatch.lastIndexOf('.')>-1)?Globals.fileToPatch.substring(Globals.fileToPatch.lastIndexOf('.'),Globals.fileToPatch.length()):""):"")).delete();
+							            if(d.isChecked()&&c.isChecked()&&e.isChecked()&&Globals.fileToPatch.lastIndexOf('.')>-1)
+							            {
+							            	ed.setText(ed.getText()+Globals.fileToPatch.substring(Globals.fileToPatch.lastIndexOf('.'),Globals.fileToPatch.length()));
+							            }
+							            patch(c.isChecked(), d.isChecked(), r.isChecked(), ed.getText().toString());
+							        }
+							    });
+							    dialog2.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+							        public void onClick(DialogInterface dialog, int buttonId) {
+							          Toast t  = Toast.makeText(staticThis, getResources().getString(R.string.nopatch), Toast.LENGTH_SHORT);
+							          t.show();
+							        }
+							    });
+							    dialog2.show();
+							}else{
+								if(d.isChecked()&&c.isChecked()&&e.isChecked()&&Globals.fileToPatch.lastIndexOf('.')>-1)
+					            {
+					            	ed.setText(ed.getText()+Globals.fileToPatch.substring(Globals.fileToPatch.lastIndexOf('.'),Globals.fileToPatch.length()));
+					            }
+								patch(c.isChecked(), d.isChecked(), r.isChecked(), ed.getText().toString());
+							}	
 				        }
 				    });
 				    dialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
@@ -227,38 +322,84 @@ public class MainActivity extends Activity {
 				    });
 				    dialog.show();
 				}else{
-					patch(c.isChecked(),d.isChecked(),ed.getText().toString());
-				}	
+					if(d.isChecked()&&c.isChecked()&&e.isChecked()&&Globals.fileToPatch.lastIndexOf('.')>-1)
+		            {
+		            	ed.setText(ed.getText()+Globals.fileToPatch.substring(Globals.fileToPatch.lastIndexOf('.'),Globals.fileToPatch.length()));
+		            }
+					patch(c.isChecked(), d.isChecked(), r.isChecked(), ed.getText().toString());
+				}
+				
 			}
 		});
 	}
 	
-	public void patch(final boolean c, final boolean d, final String ed)
+	public void patch(final boolean c, final boolean d, final boolean r, final String ed)
 	{
 		final ProgressDialog myPd_ring=ProgressDialog.show(staticThis, getResources().getString(R.string.wait), getResources().getString(R.string.wait_desc), true);
         myPd_ring.setCancelable(false);
 			new Thread(new Runnable() {
 		        public void run(){
-		        	if(new File(Globals.patchToApply).exists()&& new File(Globals.fileToPatch).exists()){
+		        	if(new File(Globals.patchToApply).exists()&& new File(Globals.fileToPatch).exists()&& !Globals.fileToPatch.toLowerCase(Locale.US).endsWith(".ecm")){
 		        		String msg=getResources().getString(R.string.success);
 						if(Globals.patchToApply.toLowerCase(Locale.US).endsWith(".ups"))
 						{
-							int e = upsPatchRom(Globals.fileToPatch, Globals.patchToApply, Globals.fileToPatch+".new");
+							int e = upsPatchRom(Globals.fileToPatch, Globals.patchToApply, Globals.fileToPatch+".new", r ? 1 : 0);
 							if(e!=0)
 							{
 								msg=parseError(e, Globals.TYPE_UPS);
 							}
-						}else if(Globals.patchToApply.toLowerCase(Locale.US).endsWith(".xdelta")){
-							int e = xdeltaPatchRom(Globals.fileToPatch, Globals.patchToApply, Globals.fileToPatch+".new");
+						}else if(Globals.patchToApply.toLowerCase(Locale.US).endsWith(".xdelta")||Globals.patchToApply.toLowerCase(Locale.US).endsWith(".xdelta3")||Globals.patchToApply.toLowerCase(Locale.US).endsWith(".vcdiff")){
+							RandomAccessFile f = null;
+							try { 
+								f = new RandomAccessFile(Globals.patchToApply, "r");
+							} catch (FileNotFoundException e1) {
+								e1.printStackTrace();
+							}
+							StringBuilder s = new StringBuilder();
+							try {
+								if(f.length()>=9)
+								{
+									for(int i = 0; i<8; i++)
+									{
+										s.append((char)f.readByte());
+										f.seek(i+1);
+									}
+								}
+							} catch (IOException e1) {
+								e1.printStackTrace();
+							}
+							try {
+								f.close();
+							} catch (IOException e1) {
+								e1.printStackTrace();
+							}
+							// Header of xdelta patch determines version
+							if(s.toString().equals("%XDELTA%")||s.toString().equals("%XDZ000%")||s.toString().equals("%XDZ001%")||s.toString().equals("%XDZ002%")||s.toString().equals("%XDZ003%")||s.toString().equals("%XDZ004%"))
+							{
+								int e = xdelta1PatchRom(Globals.fileToPatch, Globals.patchToApply, Globals.fileToPatch+".new");
+								if(e!=0)
+								{
+									msg=parseError(e, Globals.TYPE_XDELTA1);
+								}
+							}else{
+							int e = xdelta3PatchRom(Globals.fileToPatch, Globals.patchToApply, Globals.fileToPatch+".new");
 							if(e!=0)
 							{
-								msg=parseError(e, Globals.TYPE_XDELTA);
+								msg=parseError(e, Globals.TYPE_XDELTA3);
+							}
 							}
 						}else if(Globals.patchToApply.toLowerCase(Locale.US).endsWith(".bps")){
-							int e = bpsPatchRom(Globals.fileToPatch, Globals.patchToApply, Globals.fileToPatch+".new");
+							int e = bpsPatchRom(Globals.fileToPatch, Globals.patchToApply, Globals.fileToPatch+".new", r ? 1 : 0);
 							if(e!=0)
 							{
 								msg=parseError(e, Globals.TYPE_BPS);
+							}
+						}else if(Globals.patchToApply.toLowerCase(Locale.US).endsWith(".dps"))
+						{
+							int e = dpsPatchRom(Globals.fileToPatch, Globals.patchToApply, Globals.fileToPatch+".new");
+							if(e!=0)
+							{
+								msg=parseError(e,Globals.TYPE_DPS);
 							}
 						}else if(Globals.patchToApply.toLowerCase(Locale.US).endsWith(".bsdiff")){
 							int e = bsdiffPatchRom(Globals.fileToPatch, Globals.patchToApply, Globals.fileToPatch+".new");
@@ -274,11 +415,18 @@ public class MainActivity extends Activity {
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
-							int e = ppfPatchRom(Globals.fileToPatch, Globals.patchToApply);
+							int e = ppfPatchRom(Globals.fileToPatch, Globals.patchToApply, r ? 1 : 0);
 							if(e!=0)
 							{
 								msg=parseError(e, Globals.TYPE_PPF);
 							}
+							
+						}else if(Globals.patchToApply.toLowerCase(Locale.US).endsWith(".patch")){
+							int e = xdelta1PatchRom(Globals.fileToPatch, Globals.patchToApply, Globals.fileToPatch+".new");
+							if(e!=0)
+							{
+								msg=parseError(e, Globals.TYPE_XDELTA1);
+							}	
 						}else{
 							RandomAccessFile f= null;
 							try {
@@ -322,7 +470,7 @@ public class MainActivity extends Activity {
 							}
 							
 						}
-						if(Globals.patchToApply.toLowerCase(Locale.US).endsWith(".ups")||Globals.patchToApply.toLowerCase().endsWith(".xdelta")||Globals.patchToApply.toLowerCase().endsWith(".bps")||Globals.patchToApply.toLowerCase().endsWith(".bsdiff"))
+						if(Globals.patchToApply.toLowerCase(Locale.US).endsWith(".ups")||Globals.patchToApply.toLowerCase(Locale.US).endsWith(".xdelta")||Globals.patchToApply.toLowerCase(Locale.US).endsWith(".xdelta3")||Globals.patchToApply.toLowerCase(Locale.US).endsWith(".vcdiff")||Globals.patchToApply.toLowerCase(Locale.US).endsWith(".patch")||Globals.patchToApply.toLowerCase(Locale.US).endsWith(".bps")||Globals.patchToApply.toLowerCase(Locale.US).endsWith(".bsdiff")||Globals.patchToApply.toLowerCase(Locale.US).endsWith(".dps"))
 						{
 							File oldrom = new File(Globals.fileToPatch);
 							File bkrom = new File(Globals.fileToPatch+".bak");
@@ -349,7 +497,29 @@ public class MainActivity extends Activity {
 							}
 						}
 						Globals.msg=msg;
-					}else{
+					}else if(Globals.fileToPatch.toLowerCase(Locale.US).endsWith(".ecm"))
+					{
+						int e = 0;
+						String msg=getResources().getString(R.string.success);
+						if(c)
+						{
+							
+							if(d)
+							{
+								e=ecmPatchRom(Globals.fileToPatch,Globals.fileToPatch.substring(0,Globals.fileToPatch.lastIndexOf('/'))+ed,1);
+							}else{
+								new File(Globals.fileToPatch).renameTo(new File(Globals.fileToPatch+".bak"));
+								e=ecmPatchRom(Globals.fileToPatch+".bak",Globals.fileToPatch,1);
+							}
+						}else{
+							e=ecmPatchRom(Globals.fileToPatch, "",0);
+						}
+						if(e!=0)
+						{
+							msg=parseError(e, Globals.TYPE_ECM);
+						}
+						Globals.msg=msg;
+		        	}else{
 						Globals.msg=getResources().getString(R.string.fnf);
 					}
 		        }
@@ -384,6 +554,7 @@ public class MainActivity extends Activity {
 		return true;
 	}
 
+	// Error message based on error code.
 	public String parseError(int e, int t)
 	{
 		switch(t)
@@ -408,17 +579,47 @@ public class MainActivity extends Activity {
 			default:
 				return getResources().getString(R.string.upsDefault)+e;
 			}
-		case Globals.TYPE_XDELTA:
+		case Globals.TYPE_XDELTA3:
 			switch(e)
 			{
 			case -17710:
-				return getResources().getString(R.string.xdeltaNegativeSeventeenThousandSevenHundredTen);
+				return getResources().getString(R.string.xdelta3NegativeSeventeenThousandSevenHundredTen);
 			case -17711:
-				return getResources().getString(R.string.xdeltaNegativeSeventeenThousandSevenHundredEleven);
+				return getResources().getString(R.string.xdelta3NegativeSeventeenThousandSevenHundredEleven);
 			case -17712:
-				return getResources().getString(R.string.xdeltaNegativeSeventeenThousandSevenHundredTwelve);
+				return getResources().getString(R.string.xdelta3NegativeSeventeenThousandSevenHundredTwelve);
 			default:
-				return getResources().getString(R.string.xdeltaDefault)+e;	
+				return getResources().getString(R.string.xdelta3Default)+e;	
+			}
+		case Globals.TYPE_XDELTA1:
+			switch(e)
+			{
+			case 2:
+				return getResources().getString(R.string.xdelta1Two);
+			case 3:
+				return getResources().getString(R.string.xdelta1Three);
+			case 4:
+				return getResources().getString(R.string.xdelta1Four);
+			case 5:
+				return getResources().getString(R.string.xdelta1Five);
+			case 6:
+				return getResources().getString(R.string.xdelta1Six);
+			case 7:
+				return getResources().getString(R.string.xdelta1Seven);
+			case 8:
+				return getResources().getString(R.string.xdelta1Eight);
+			case 9:
+				return getResources().getString(R.string.xdelta1Nine);
+			case 10:
+				return getResources().getString(R.string.xdelta1Ten);
+			case 11:
+				return getResources().getString(R.string.xdelta1Eleven);
+			case 12:
+				return getResources().getString(R.string.xdelta1Twelve);
+			case 13:
+				return getResources().getString(R.string.xdelta1Thirteen);
+			default:
+				return getResources().getString(R.string.xdelta1Default)+e;	
 			}
 		case Globals.TYPE_BPS:
 			switch(e)
@@ -514,6 +715,34 @@ public class MainActivity extends Activity {
 				default:
 					return getResources().getString(R.string.ips32Default)+e;
 				}
+			case Globals.TYPE_ECM:
+				switch(e)
+				{
+				case 1:
+					return getResources().getString(R.string.ecmOne);
+				case 2:
+					return getResources().getString(R.string.ecmTwo);
+				case 3:
+					return getResources().getString(R.string.ecmThree);
+				case 4:
+					return getResources().getString(R.string.ecmFour);
+				case 5:
+					return getResources().getString(R.string.ecmFive);
+				default:
+					return getResources().getString(R.string.ecmDefault)+e;
+				}
+			case Globals.TYPE_DPS:
+				switch(e)
+				{
+				case -1:
+					return getResources().getString(R.string.dpsNegativeOne);
+				case -2:
+					return getResources().getString(R.string.dpsNegativeTwo);
+				case -3:
+					return getResources().getString(R.string.dpsNegativeThree);
+				default:
+					return getResources().getString(R.string.dpsDefault)+e;
+				}
 			default:
 				return getResources().getString(R.string.errorDefault);
 		}
@@ -528,9 +757,17 @@ public class MainActivity extends Activity {
 				{
 					tv1.setText(Globals.fileToPatch.substring(Globals.fileToPatch.lastIndexOf("/")+1));
 				}
+				if(Globals.fileToPatch.toLowerCase(Locale.US).endsWith(".ecm"))
+				{
+					tv2.setEnabled(false);
+					((Button) findViewById(R.id.patchButton)).setEnabled(false);
+				}else{
+					tv2.setEnabled(true);
+					((Button) findViewById(R.id.patchButton)).setEnabled(true);
 				if(Globals.patchToApply.lastIndexOf("/")>-1)
 				{
 					tv2.setText(Globals.patchToApply.substring(Globals.patchToApply.lastIndexOf("/")+1));
+				}
 				}
 				tv1.postInvalidate();
 				tv2.postInvalidate();

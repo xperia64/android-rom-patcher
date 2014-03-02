@@ -26,10 +26,13 @@ public class Globals {
 	public static String msg="";
 	// Patch types in no real order
 	public static final int TYPE_UPS=0;
-	public static final int TYPE_XDELTA=1;
+	public static final int TYPE_XDELTA3=1;
 	public static final int TYPE_BPS=2;
 	public static final int TYPE_BSDIFF=3;
 	public static final int TYPE_PPF=4;
 	public static final int TYPE_IPS=5;
 	public static final int TYPE_IPS32=6;
+	public static final int TYPE_XDELTA1=7;
+	public static final int TYPE_ECM=8;
+	public static final int TYPE_DPS=9;
 }

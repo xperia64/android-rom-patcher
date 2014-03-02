@@ -47,7 +47,7 @@
         android:id="@+id/backupHelp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/patchButton"
+        android:layout_below="@+id/ignoreHelp"
         android:layout_toRightOf="@+id/backupCheckbox"
         android:src="@android:drawable/ic_menu_help" />
 
@@ -69,21 +69,13 @@
         android:checked="false"
         android:text="@string/rename2" />
 
-    <ImageButton
-        android:id="@+id/outfileHelp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/backupHelp"
-        android:layout_toRightOf="@+id/altNameCheckbox"
-        android:src="@android:drawable/ic_menu_help" />
-
     <EditText
         android:id="@+id/txtOutFile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/outfileHelp"
+        android:layout_below="@+id/fileExtCheckbox"
         android:layout_marginLeft="30dp"
         android:ems="10"
         android:enabled="false" >
@@ -100,6 +92,38 @@
         android:layout_below="@+id/txtOutFile"
         android:text="@string/patch"
         android:textAppearance="?android:attr/textAppearanceLarge" />
+	   <ImageButton
+        android:id="@+id/ignoreHelp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/patchButton"
+        android:layout_toRightOf="@+id/ignoreCRC"
+        android:src="@android:drawable/ic_menu_help" />
+
+	   <CheckBox
+	       android:id="@+id/ignoreCRC"
+	       android:layout_width="wrap_content"
+	       android:layout_height="wrap_content"
+	       android:layout_below="@+id/patchText"
+	       android:text="@string/ignoreChks" />
+
+	   <ImageButton
+	       android:id="@+id/outfileHelp"
+	       android:layout_width="wrap_content"
+	       android:layout_height="wrap_content"
+	       android:layout_above="@+id/fileExtCheckbox"
+	       android:layout_toRightOf="@+id/altNameCheckbox"
+	       android:src="@android:drawable/ic_menu_help" />
+
+	   <CheckBox
+	       android:id="@+id/fileExtCheckbox"
+	       android:layout_width="wrap_content"
+	       android:layout_height="wrap_content"
+	       android:layout_alignLeft="@+id/txtOutFile"
+	       android:layout_below="@+id/altNameCheckbox"
+	       android:checked="true"
+	       android:enabled="false"
+	       android:text="@string/fileExt" />
 
 </RelativeLayout>
 </ScrollView>
