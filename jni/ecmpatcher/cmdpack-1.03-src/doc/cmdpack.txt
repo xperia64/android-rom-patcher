@@ -1,0 +1,366 @@
+--------------------------------------------------------------------------------
+Command-Line Pack v1.03
+Copyright (C) 1996-2011 Neill Corlett
+http://www.neillcorlett.com/cmdpack/
+--------------------------------------------------------------------------------
+
+This is a collection of command-line tools I've written over the years that I
+decided to clean up and repackage.  All of the tools are released under the
+terms of the GNU General Public License version 3.
+
+--------------------------------------------------------------------------------
+Contents
+--------------------------------------------------------------------------------
+
+bin2iso - Convert CD .BIN to .ISO
+---------------------------------
+
+Converts CD-ROM .BIN images (including full 2352-byte sectors) into .ISO format
+(2048-byte sectors). Automatically detects mode 1 or 2. Will warn if there are
+any form 2 sectors, which are not convertible.
+
+Usage: bin2iso [-f] input_file output_file
+ -f: Force conversion and bypass checks
+
+
+bincomp - Compare binary files
+------------------------------
+
+Similar to the old DOS "FC /B" command. The default output is a side-by-side
+table showing 16 bytes per line. The "-l" flag will show one byte per line.
+
+Usage: bincomp file1 file2 [-l]
+  -l   Use long format
+
+
+brrrip - Rip SNES BRR sound samples
+-----------------------------------
+
+Automatically detects and rips sound samples from SNES ROMs. Works great with
+uncompressed .SPC files too.
+
+Usage: brrrip romfile [samplerate [minblocks]]
+
+"samplerate" should be given in Hz. Samples will only be detected if they are at
+least "minblocks" long (default=50). The output files will be named
+(hex address).wav.
+
+
+byteshuf - Shuffle or unshuffle bytes in a file
+-----------------------------------------------
+
+Divides a file into its interleaved even/odd bytes, or recombines them. Can also
+divide every 3rd, 4th, etc. byte, depending on how many subfiles you specify.
+Useful for dealing with certain types of ROM images.
+
+Usage:
+  To unshuffle: byteshuf [-o] -u source      [subfiles...]
+  To shuffle:   byteshuf [-o] -s destination [subfiles...]
+
+Options:
+  -o       Force overwrite
+
+For example, "byteshuf -u abc def0 def1" will split all the even bytes from
+"abc" into "def0", and the odd bytes into "def1".
+
+
+byteswap - Swap byte order of files
+-----------------------------------
+
+Swaps the byte order of each record in a file, in place. If the record size is
+2, this means every even and odd byte is swapped, but the record size can also
+be larger than 2. Useful for dealing with certain types of ROM images.
+
+Usage: byteswap [-q] [-s recordsize] files...
+ -q: Quiet
+ -s: Size, in bytes, of each record to swap (default: 2)
+
+
+cdpatch - CD-XA image insert/extract utility
+--------------------------------------------
+
+Inserts or extracts files in-place into CD-ROM images in either .BIN or .ISO
+format. Properly handles CD-XA streams from Mode 2 CDs (Video CDs, PlayStation
+movie files, etc.) and patches ECC/EDC data as appropriate.
+
+Usage:
+  To insert:  cdpatch -i bin_or_iso [options] [files...]
+  To extract: cdpatch -x bin_or_iso [options] [files...]
+
+Options:
+  -be       Favor big-endian values in ISO9660 metadata
+  -boot     Insert or extract boot area
+  -d dir    Set the base directory for inserted or extracted files
+            (defaults to .)
+  -f        Skip filesystem consistency checks
+  -le       Favor little-endian values in ISO9660 metadata
+  -o        Force overwrite when extracting files
+  -r        Recurse into subdirectories
+  -v        Verbose
+
+By default, cdpatch will attempt to insert or extract every file in the CD
+image, the same as if you'd specified "-r ." The "-boot" option will insert or
+extract the 32KiB boot sector area to a file named "boot".
+
+Some CD images may have conflicting sets big- and little-endian metadata as a
+platform-specific quirk or copy protection scheme; the "-be" and "-le" options
+can be used to override this.
+
+Specifying both -f and -v will list all filesystem errors, while still ignoring
+them for extraction purposes.
+
+When extracting files via -x, cdpatch preserves file modification times when
+possible.
+
+
+ecm - Encoder/decoder for Error Code Modeler format
+---------------------------------------------------
+
+ECM is a compression format for CD images which removes ECC/EDC data where it's
+possible to do so losslessly. Compressing a CD image with ECM first, then
+compressing the ECM file with a general-purpose compressor such as 7z or RAR,
+can result in better compression than 7z or RAR alone.
+
+See http://www.neillcorlett.com/ecm/ for more details.
+
+Usage:
+
+To encode:
+    ecm cdimagefile
+    ecm cdimagefile ecmfile
+    ecm e cdimagefile ecmfile
+
+To decode:
+    unecm ecmfile
+    unecm ecmfile cdimagefile
+    ecm d ecmfile cdimagefile
+
+
+fakecrc - Fake the CRC32 of a file
+----------------------------------
+
+Modifies a file to force it to have a particular CRC32 checksum, by patching 4
+consecutive bytes anywhere in the file. Can also obtain the CRC32 checksum of a
+file.
+
+Usage:
+To obtain the CRC32 of a file:
+    fakecrc file
+To modify the CRC32 of a file:
+    fakecrc file desired_crc [offset]
+
+The 4 bytes at "offset" will be modified. If no offset is given, the last 4
+bytes of the file are used.
+
+
+hax65816 - Simple 65816 disassembler
+------------------------------------
+
+A simple 65c816 disassembler with basic flag following. This is the disassembler
+I used for the Seiken Densetsu 3 project, among others.
+
+Usage: hax65816 imagefile start address [length] [options]
+Output is written to stdout. All values must be given in hex.
+If no length is given, disassembly will stop at the end of the bank.
+Options:
+  -m0         Assume M flag = 0
+  -m1         Assume M flag = 1 (default)
+  -x0         Assume X flag = 0 (default)
+  -x1         Assume X flag = 1
+  -noreturn   Disable flag reset after RTS/RTL/RTI
+  -noguess    Disable flag guess on BRK/COP/WDM/STP
+  -nofollow   Disable REP/SEP following (not recommended)
+
+
+id3point - Pointless ID3v1 Tagger
+---------------------------------
+
+A basic ID3v1 tagger for MP3 files. Probably superseded by newer tools, but
+included here nonetheless.
+
+Usage: id3point [options] mp3file(s)
+
+Options:
+  -t title     Set ID3 title       -t-   Clear ID3 title
+  -a artist    Set ID3 artist      -a-   Clear ID3 artist
+  -m album     Set ID3 album       -m-   Clear ID3 album
+  -y year      Set ID3 year        -y-   Clear ID3 year
+  -c comment   Set ID3 comment     -c-   Clear ID3 comment
+  -k track#    Set ID3 track #     -k-   Clear ID3 track #
+  -g genre#    Set ID3 genre #     -g-   Clear ID3 genre #
+  -tf          Set ID3 title based on the filename
+
+Notes:
+  - Only ID3v1 tags are supported.
+  - The track number increments automatically for each additional file.
+  - The -tf option will turn "Artist - Title.mp3" into "Title", but
+    be sure to check the titles by hand in case it gets confused.
+
+
+pecompat - Maximize compatibility of a Win32 PE file
+----------------------------------------------------
+
+Patches a Windows 32-bit PE executable file to maximize its compatibility with
+older versions of Windows.
+
+- Clears the linker timestamp
+- Sets the required OS version and subsystem version to "4.00"
+- Recalculates the PE file checksum
+- Warns if any Unicode import functions are used
+
+Usage: pecompat pe_exe_file(s)
+
+
+rels - Relative Searcher
+------------------------
+
+Searches for a string in a group of files by comparing the relative difference
+between each letter. This allows finding strings in non-ASCII character sets.
+Also attempts double values (e.g. 00=A, 02=B, 04=C) and wide values (every other
+byte, as in UCS-2). A staple ROM hacking tool.
+
+Usage: rels string files
+
+Search strings may include '.' characters as wildcards, but must include at
+least two non-wildcard characters.
+
+
+screamf - .AMF to .S3M converter
+--------------------------------
+
+Converts AMF music files to S3M. AMF was a format used exclusively by Otto
+Chrons' DOS Sound and Music Interface (DSMI) library and Dual Module Player.
+Various DOS games and demos in the 1990s used this format. AMF files were the
+result of running MOD2AMF on an existing S3M or other module; screamf does the
+opposite. It's round-trippable for the most part.
+
+Usage: screamf inputfile.amf outputfile.s3m
+
+
+subfile - Extract a portion of a file
+-------------------------------------
+
+Extracts a portion of a file, given a starting offset and length, in bytes.
+Offset and length may be specified in C style "0x123" or "0123" notation for
+hexadecimal or octal.
+
+Usage: subfile infile offset length outfile
+
+
+uips - Universal IPS patch create/apply utility
+-----------------------------------------------
+
+UIPS is a command-line utility for creating and applying IPS patches. IPS is an
+old patch format for binary files, limited to 16 MiB in size, and not to be
+confused with the newer UPS format. Multiple source files and IPS v2 truncation
+are supported.
+
+Usage:
+To create an IPS patch:
+  uips c patch_file source_file(s) target_file
+To apply an IPS patch:
+  uips a patch_file target_file
+
+For example, "uips c patch.ips file1 file2 file3 file4" will create a patch file
+capable of transforming any of file1, file2, or file3 to file4.
+
+
+usfv - Universal SFV create/verify utility
+------------------------------------------
+
+USFV is a utility for creating and verifying SFV (Simple File Verification)
+files, such as those created by Win-SFV32. A SFV file contains a list of
+filenames and their corresponding CRC32 checksums.
+
+Caveat: CRC32 is not a cryptographic hash and cannot be used to ensure that a
+file was not maliciously modified (see fakecrc, above).
+
+Usage:
+To create a SFV file: usfv c sfvfile filenames
+To verify a SFV file: usfv v sfvfile
+
+
+vb2rip - VB2 sound format ripping utility
+-----------------------------------------
+
+Rips music in .VB2 and various similar formats found in PlayStation and
+PlayStation 2 games.
+
+See http://www.neillcorlett.com/vb2rip/ for more details.
+
+Usage: vb2rip [options] inputfile(s)
+
+Options:
+  -fmt format     Specify the input file format
+  -o path         Specify the output filename (if one input file is given)
+                    or specify the output directory (if several are given)
+  -mono           Treat input file as monaural
+  -stereo         Treat input file as stereo
+  -rate n         Specify the sample rate
+  -interleave n   Specify the block interleave size
+  -skip n         Skip this many bytes after each block
+  -offset n       Start at the given offset in the input file
+  -endflag        Stop decoding when the sample end flag is reached
+  -noendflag      Ignore the sample end flag
+  -maxbytes n     Set the maximum number of input bytes to decode
+
+Supported input formats:
+  Format   Description
+  ------------------------------------------------------------
+  raw      Raw data (for experimentation)
+  vb2      Konami multi-song .BIN/.VB2 file (Dance Dance Revolution, etc.)
+  8        .8 file (Suikoden)
+  msa      .MSA file (Psyvariar, possibly other PS2 games)
+  xa2      .XA2 file (Extreme-G 3, possibly other PS2 games)
+
+
+wordadd - Addition word puzzle solver
+-------------------------------------
+
+Finds solutions to letter/digit substitution puzzles of the "WORD + WORD =
+OTHER" variety. Supports multiple addends and digits mixed in with letters.
+
+Usage: wordadd words... sum
+Examples:
+    wordadd BEEF BACON MEATS
+
+
+zerofill - Create a large, empty file
+-------------------------------------
+
+Creates a file filled with bytes of value zero. Similar to "dd if=/dev/zero",
+except not all platforms have dd, and there's a progress indicator.
+
+Inside a virtual machine, zerofill can be used to create a large dummy file in
+order to zero out all the unused sectors before compressing the drive image.
+(zerofill is also useful for creating drive images in the first place.)
+
+Usage: zerofill [-f] [-q] size filename
+ -f: Force overwrite
+ -q: Quiet
+
+"size" may be specified in C style "0x123" or "0123" notation for hexadecimal or
+octal.
+
+
+--------------------------------------------------------------------------------
+Terms of use
+--------------------------------------------------------------------------------
+
+All of the programs included in Command-Line Pack are subject to the following
+terms of use:
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+--------------------------------------------------------------------------------

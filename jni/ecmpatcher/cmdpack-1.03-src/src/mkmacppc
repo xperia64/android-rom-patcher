@@ -1,0 +1,4 @@
+#!/bin/sh
+MYFLAGS="-arch ppc"
+gcc $MYFLAGS -O9 -Wall -Wextra -Werror -fomit-frame-pointer "$1.c" -s -o "$1"
+

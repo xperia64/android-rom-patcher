@@ -40,7 +40,7 @@
 class UPS {
 public:
   bool create(const char *x, const char *y, const char *z);
-  int apply (const char *x, const char *y, const char *z);
+  int apply (const char *x, const char *y, const char *z, int ignoreChecksum);
 
   const char *error;
 

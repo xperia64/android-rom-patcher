@@ -1,22 +1,3 @@
-/*******************************************************************************
- * This file is part of ROM Patcher.
- * 
- * Copyright (c) 2014 xperia64.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the GNU Public License v3.0
- * which accompanies this distribution, and is available at
- * http://www.gnu.org/licenses/gpl.html
- * 
- * Contributors:
- * 	Paul Kratt - main MultiPatch application for Mac OSX
- * 	byuu - UPS and BPS patchers
- * 	Neil Corlett - IPS patcher
- * 	Daniel Ekstr'm - PPF patcher
- * 	Josh MacDonald - XDelta
- * 	Colin Percival - BSDiff
- * 	xperia64 - port to Android and IPS32 support
- ******************************************************************************/
-
 /* 
 	Native JNI linkage
 						*/
@@ -34,7 +15,7 @@
 
 //////////////////////////////////////////////////////////////////////
 // Macros for little to big Endian conversion.
-
+int ignoreChecksum=0;
 #ifdef __BIG_ENDIAN__
 
 #define Endian16_Swap(value)	(value = (((((unsigned short) value) << 8) & 0xFF00)  | \
@@ -255,7 +236,11 @@ int ApplyPPF3Patch(FILE *ppf, FILE *bin, char mode){
 				printf("Aborted...\n");
 				return;
 			}*/
-			return -3;
+			if(!ignoreChecksum)
+			{
+				return -3;
+			}
+			
 		}
 	}
 
@@ -402,10 +387,12 @@ JNIEXPORT int JNICALL Java_com_xperia64_rompatcher_MainActivity_ppfPatchRom (
 
      jstring romPath,             /* argument #1 */ 
 
-     jstring patchPath)          /* argument #2 */ 
+     jstring patchPath,
+
+	 jint jignoreChecksum)          /* argument #2 */ 
 
 { 
-
+	ignoreChecksum=(int) jignoreChecksum;
      const char *str1 = env->GetStringUTFChars(romPath, 0); 
 	 const char *str2 = env->GetStringUTFChars(patchPath, 0); 
 	 OpenFiles(str1, str2);

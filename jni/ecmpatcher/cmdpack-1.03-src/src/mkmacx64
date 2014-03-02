@@ -1,0 +1,4 @@
+#!/bin/sh
+MYFLAGS="-mmacosx-version-min=10.4 -arch x86_64"
+gcc $MYFLAGS -O9 -Wall -Wextra -Werror -fomit-frame-pointer "$1.c" -o "$1"
+

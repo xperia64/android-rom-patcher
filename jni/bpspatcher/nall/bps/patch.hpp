@@ -33,7 +33,7 @@ struct bpspatch {
     patch_checksum_invalid,
   };
 
-  inline result apply();
+  inline result apply(int ignoreChecksum);
 
 protected:
   enum : unsigned { SourceRead, TargetRead, SourceCopy, TargetCopy };
@@ -126,7 +126,7 @@ unsigned bpspatch::size() const {
   return modifyTargetSize;
 }
 
-bpspatch::result bpspatch::apply() {
+bpspatch::result bpspatch::apply(int ignoreChecksum) {
   if(modifySize < 19) return result::patch_too_small;
 
   uint32_t modifyChecksum = ~0, targetChecksum = ~0;
@@ -207,9 +207,9 @@ bpspatch::result bpspatch::apply() {
   uint32_t sourceChecksum = crc32_calculate(sourceData, modifySourceSize);
   targetChecksum = ~targetChecksum;
 
-  if(sourceChecksum != modifySourceChecksum) return result::source_checksum_invalid;
-  if(targetChecksum != modifyTargetChecksum) return result::target_checksum_invalid;
-  if(checksum != modifyModifyChecksum) return result::patch_checksum_invalid;
+  if(sourceChecksum != modifySourceChecksum && !ignoreChecksum) return result::source_checksum_invalid;
+  if(targetChecksum != modifyTargetChecksum  && !ignoreChecksum) return result::target_checksum_invalid;
+  if(checksum != modifyModifyChecksum && !ignoreChecksum) return result::patch_checksum_invalid;
 
   return result::success;
 }

@@ -60,7 +60,7 @@ bool UPS::create(const char *x, const char *y, const char *z) {
   return true;
 }
 
-int UPS::apply(const char *x, const char *y, const char *z) {
+int UPS::apply(const char *x, const char *y, const char *z, int ignoreChecksum) {
   error = "";
 
   if(!fx.open(x, file::mode_read))      { error = "Input file cannot be opened.";  close(); return -1; }
@@ -77,7 +77,7 @@ int UPS::apply(const char *x, const char *y, const char *z) {
   fz.seek(0);
   crcz = ~0;
   for(uint64_t i = 0; i < sizez - 4; i++) zread();
-  if(~crcz != rcrcz) { error = "Patch CRC32 invalid.";  close(); return -5; }
+  if(~crcz != rcrcz&&!ignoreChecksum) { error = "Patch CRC32 invalid.";  close(); return -5; }
   fz.seek(0);
 
   if(zread() != 'U') { error = "Patch header invalid."; close(); return -6; }
@@ -100,7 +100,7 @@ int UPS::apply(const char *x, const char *y, const char *z) {
     //y^z->x
     swap(sizex, sizey);
     swap(rcrcx, rcrcy);
-  } else {
+  } else if(!ignoreChecksum) {
     error = "Input file size and/or CRC32 invalid.";
     close();
     return -7;
@@ -132,7 +132,7 @@ int UPS::apply(const char *x, const char *y, const char *z) {
   fy.seek(0);
   crcy = ~0;
   while(!fy.end()) yread();
-  if(~crcy != rcrcy) { error = "Output CRC32 invalid."; close(); return -8; }
+  if(~crcy != rcrcy&&!ignoreChecksum) { error = "Output CRC32 invalid."; close(); return -8; }
 
   close();
   return 0;
