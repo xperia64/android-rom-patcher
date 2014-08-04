@@ -9,12 +9,10 @@ LOCAL_MODULE := bsdiffpatcher
 LOCAL_C_INCLUDES := $(LOCAL_PATH)
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/../bzip2/include
 
-SRCDIR := $(shell readlink $(LOCAL_PATH))
-
 LOCAL_SRC_FILES := \
-$(SRCDIR)/bspatch.c \
-$(SRCDIR)/bsdiff.c \
-$(SRCDIR)/nativelink.c 
+bspatch.c \
+bsdiff.c \
+nativelink.c 
 
 LOCAL_CFLAGS := -O3
 

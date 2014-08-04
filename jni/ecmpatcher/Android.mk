@@ -8,11 +8,9 @@ LOCAL_MODULE := ecmpatcher
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)
 
-SRCDIR := $(shell readlink $(LOCAL_PATH))
-
 LOCAL_SRC_FILES := \
-$(SRCDIR)/ecm.c \
-$(SRCDIR)/nativelink.c 
+ecm.c \
+nativelink.c 
 
 LOCAL_CFLAGS := -O3
 

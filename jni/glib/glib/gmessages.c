@@ -941,7 +941,7 @@ void g_log_default_handler (const gchar   *log_domain,
   else if (log_level & G_LOG_LEVEL_DEBUG)
     pri = ANDROID_LOG_DEBUG;
 
-  __android_log_print (pri, log_domain == NULL ? "GLib-NULL" : log_domain, message);
+  __android_log_print (pri, log_domain == NULL ? "GLib-NULL" : log_domain, "%s", message);
 }
 #else
 void

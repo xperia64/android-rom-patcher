@@ -8,11 +8,9 @@ LOCAL_MODULE := xdelta3patcher
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)
 
-SRCDIR := $(shell readlink $(LOCAL_PATH))
-
 LOCAL_SRC_FILES := \
-$(SRCDIR)/xdelta3.c \
-$(SRCDIR)/nativelink.c 
+xdelta3.c \
+nativelink.c 
 
 LOCAL_CFLAGS := -O3
 

@@ -8,11 +8,10 @@ LOCAL_MODULE := dpspatcher
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)
 
-SRCDIR := $(shell readlink $(LOCAL_PATH))
 
 LOCAL_SRC_FILES := \
-$(SRCDIR)/dpspatcher.c \
-$(SRCDIR)/nativelink.c 
+dpspatcher.c \
+nativelink.c 
 
 LOCAL_CFLAGS := -O3
 

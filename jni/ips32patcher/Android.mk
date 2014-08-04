@@ -8,11 +8,9 @@ LOCAL_MODULE := ips32patcher
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)
 
-SRCDIR := $(shell readlink $(LOCAL_PATH))
-
 LOCAL_SRC_FILES := \
-$(SRCDIR)/ips.c \
-$(SRCDIR)/nativelink.c 
+ips.c \
+nativelink.c 
 
 LOCAL_CFLAGS := -O3
 

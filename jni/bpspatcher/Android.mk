@@ -15,10 +15,8 @@ LOCAL_C_INCLUDES += $(LOCAL_PATH)/nall/mosaic
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/nall/stream
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/nall/string
 
-SRCDIR := $(shell readlink $(LOCAL_PATH))
-
 LOCAL_SRC_FILES := \
-$(SRCDIR)/nativelink.cpp
+nativelink.cpp
 
 LOCAL_CFLAGS := -O3
 LOCAL_CPPFLAGS := -std=c++11 -frtti -fexceptions
