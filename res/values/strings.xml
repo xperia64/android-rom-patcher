@@ -21,6 +21,8 @@
     <string name="wait_desc">Patching rom...</string>
     <string name="success">Patching successful.</string>
     <string name="fnf">File not found.</string>
+    <string name="nagInfo">More Info</string>
+    <string name="nagMsg">Consider purchasing my other app, Timidity AE, to support future developments of ROM Patcher</string>
     <!-- UPS Errors -->
     <string name="upsNegativeOne">UPS: Input file cannot be opened.</string>
     <string name="upsNegativeTwo">UPS: Output file cannot be opened.</string>
@@ -112,6 +114,23 @@
 	<string name="dpsNegativeTwo">DPS: File size error.</string>
 	<string name="dpsNegativeThree">DPS: Patching successful, but patch is unstable.</string>
 	<string name="dpsDefault">DPS: Unknown error: </string>
-	<!-- End ECM Errors -->
+	<!-- End DPS Errors -->
+	<!-- ASM Errors -->
+	<string name="asmDefault">ASM: Unknown error: </string>
+	<!-- End ASM Errors -->
+	<!-- DLDI Errors -->
+	<string name="dldiDefault">DLDI: Unknown error: </string>
+	<!-- End DLDI Errors -->
+	<!-- APSN64 Errors -->
+	<string name="apsn64Default">APSN64: Unknown error: </string>
+	<!-- End APSN64 Errors -->
+	<!-- APSGBA Errors -->
+	<string name="apsgbaNegativeOne">APSGBA: Not a GBA APS Patch.</string>
+	<string name="apsgbaNegativeTwo">APSGBA: Bad CRC1</string>
+	<string name="apsgbaNegativeThree">APSGBA: Bad CRC2</string>
+	<string name="apsgbaNegativeFour">APSGBA: Bad CRC1&amp;CRC2</string>
+	<string name="apsgbaNegativeFive">APSGBA: I/O error</string>
+	<string name="apsgbaDefault">APSGBA: Unknown error: </string>
+	<!-- End APSGBA Errors -->
 	<string name="errorDefault">Patch type invalid.</string>
 </resources>

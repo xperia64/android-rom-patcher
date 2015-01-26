@@ -23,6 +23,7 @@ int Java_com_xperia64_rompatcher_MainActivity_xdelta1PatchRom(JNIEnv * env, jobj
 	(*env)->ReleaseStringUTFChars(env, romPath, szRomPath); 
 	(*env)->ReleaseStringUTFChars(env, patchPath, szPatchPath); 
 	(*env)->ReleaseStringUTFChars(env, outputFile, szOutputFile); 
+	free(filez);
 	return r;
 }
 

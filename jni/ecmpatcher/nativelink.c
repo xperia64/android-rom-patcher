@@ -23,5 +23,6 @@ int Java_com_xperia64_rompatcher_MainActivity_ecmPatchRom(JNIEnv * env, jobject 
 	int err = main(num, filez);
 	(*env)->ReleaseStringUTFChars(env, romPath, szRomPath); 
 	(*env)->ReleaseStringUTFChars(env, outFile, szOutFile); 
+	free(filez);
 	return err;
 }

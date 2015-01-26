@@ -23,6 +23,7 @@ public class Globals {
 	public static String fileToPatch="";
 	public static String patchToApply="";
 	public static boolean mode=false;
+	public static boolean didAnAsm = false;
 	public static String msg="";
 	// Patch types in no real order
 	public static final int TYPE_UPS=0;
@@ -35,4 +36,8 @@ public class Globals {
 	public static final int TYPE_XDELTA1=7;
 	public static final int TYPE_ECM=8;
 	public static final int TYPE_DPS=9;
+	public static final int TYPE_ASM=10;
+	public static final int TYPE_DLDI=11;
+	public static final int TYPE_APSN64=12;
+	public static final int TYPE_APSGBA=13;
 }

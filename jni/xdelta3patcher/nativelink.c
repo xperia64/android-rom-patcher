@@ -15,11 +15,11 @@ int Java_com_xperia64_rompatcher_MainActivity_xdelta3PatchRom(JNIEnv * env, jobj
 	FILE*  InFile = fopen(szPatchPath, "rb");
 	FILE*  SrcFile = fopen(szRomPath, "rb");
 	FILE* OutFile = fopen(szOutputFile, "wb");
-	int r = code (0, InFile, SrcFile, OutFile, 0x1000);
+	int rrrr = code (0, InFile, SrcFile, OutFile, 0x1500);
 	(*env)->ReleaseStringUTFChars(env, romPath, szRomPath); 
 	(*env)->ReleaseStringUTFChars(env, patchPath, szPatchPath); 
 	(*env)->ReleaseStringUTFChars(env, outputFile, szOutputFile); 
-	return r;
+	return rrrr;
 }
 
 int code (int encode, FILE* InFile, FILE* SrcFile, FILE* OutFile, int BufSize)

@@ -23,11 +23,13 @@ package com.xperia64.rompatcher;
 
 import com.google.common.io.Files;
 import com.xperia64.rompatcher.R;
+import com.xperia64.rompatcher.javapatchers.APSGBAPatcher;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Arrays;
 import java.util.Locale;
 
 import android.text.InputFilter;
@@ -37,8 +39,14 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+//import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+//import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -52,6 +60,7 @@ import android.text.Spanned;
 public class MainActivity extends Activity {
 
 
+	public static native int apsN64PatchRom(String romPath, String patchPath); 
 	public static native int ipsPatchRom(String romPath, String patchPath); 
 	public static native int ips32PatchRom(String romPath, String patchPath); 
 	public static native int upsPatchRom(String romPath, String patchPath, String outputFile, int jignoreChecksum);
@@ -62,12 +71,31 @@ public class MainActivity extends Activity {
 	public static native int bsdiffPatchRom(String romPath, String patchPath, String outputFile);
 	public static native int bpsPatchRom(String romPath, String patchPath, String outputFile, int jignoreChecksum);
 	public static native int ppfPatchRom(String romPath, String patchPath, int jignoreChecksum);
+	public static native int asmPatchRom(String romPath, String patchPath);
+	public static native int dldiPatchRom(String romPath, String patchPath);
 	Context staticThis;
+	CheckBox c;// = (CheckBox) findViewById(R.id.backupCheckbox);
+	CheckBox d;// = (CheckBox) findViewById(R.id.altNameCheckbox);
+	CheckBox r;// = (CheckBox) findViewById(R.id.ignoreCRC);
+	CheckBox e;// = (CheckBox) findViewById(R.id.fileExtCheckbox);
+	EditText ed;// = (EditText) findViewById(R.id.txtOutFile);
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		staticThis=MainActivity.this;
 		// Load native libraries
+		try {
+			System.loadLibrary("apsn64patcher");  
+		}
+		catch( UnsatisfiedLinkError e) {
+			Log.e("Bad:","Cannot grab apspatcher!");
+		}
+		try {
+			System.loadLibrary("ipspatcher");  
+		}
+		catch( UnsatisfiedLinkError e) {
+			Log.e("Bad:","Cannot grab ipspatcher!");
+		}
 		try {
 			System.loadLibrary("ipspatcher");  
 		}
@@ -158,7 +186,26 @@ public class MainActivity extends Activity {
 		catch( UnsatisfiedLinkError e) {
 			Log.e("Bad:","Cannot grab dpspatcher!");
 		}
+		try {
+			System.loadLibrary("asmpatcher");  
+		}
+		catch( UnsatisfiedLinkError e) {
+			Log.e("Bad:","Cannot grab asmpatcher!");
+		}
+		try {
+			System.loadLibrary("dldipatcher");  
+		}
+		catch( UnsatisfiedLinkError e) {
+			Log.e("Bad:","Cannot grab dldipatcher!");
+		}
 		setContentView(R.layout.main);
+		
+		c = (CheckBox) findViewById(R.id.backupCheckbox);
+		d = (CheckBox) findViewById(R.id.altNameCheckbox);
+		r = (CheckBox) findViewById(R.id.ignoreCRC);
+		e = (CheckBox) findViewById(R.id.fileExtCheckbox);
+		ed = (EditText) findViewById(R.id.txtOutFile);
+		
 		final Button romButton = (Button) findViewById(R.id.romButton);
 		romButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -224,11 +271,7 @@ public class MainActivity extends Activity {
 			    dialog.show();
 			}
 		});
-		final CheckBox c = (CheckBox) findViewById(R.id.backupCheckbox);
-		final CheckBox d = (CheckBox) findViewById(R.id.altNameCheckbox);
-		final CheckBox r = (CheckBox) findViewById(R.id.ignoreCRC);
-		final CheckBox e = (CheckBox) findViewById(R.id.fileExtCheckbox);
-		final EditText ed = (EditText) findViewById(R.id.txtOutFile);
+		
 		InputFilter filter = new InputFilter() { 
 	        public CharSequence filter(CharSequence source, int start, int end, 
 	Spanned dest, int dstart, int dend) { 
@@ -250,10 +293,12 @@ public class MainActivity extends Activity {
 					if(d.isChecked())
 					{
 						ed.setEnabled(true);
+						e.setEnabled(true);
 					}
 				}else{
 					d.setEnabled(false);
 					ed.setEnabled(false);
+					e.setEnabled(false);
 				}
 			}});
 		d.setOnClickListener(new View.OnClickListener() {
@@ -279,60 +324,77 @@ public class MainActivity extends Activity {
 				    dialog.setCancelable(false);
 				    dialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(android.R.string.yes), new DialogInterface.OnClickListener() {
 				        public void onClick(DialogInterface dialog, int buttonId) {
-				        	// Just try to interpret the following if statement. I dare you.
-				        	if(new File(Globals.fileToPatch+".bak").exists()||new File(Globals.fileToPatch+".new").exists()||(new File(Globals.fileToPatch.substring(0,Globals.fileToPatch.lastIndexOf('/')+1)+ed.getText().toString()+((e.isChecked())?((Globals.fileToPatch.lastIndexOf('.')>-1)?Globals.fileToPatch.substring(Globals.fileToPatch.lastIndexOf('.'),Globals.fileToPatch.length()):""):"")).exists()&&d.isChecked()&&c.isChecked()))
-							{
-								AlertDialog dialog2 = new AlertDialog.Builder(staticThis).create();
-							    dialog2.setTitle(getResources().getString(R.string.warning));
-							    dialog2.setMessage(getResources().getString(R.string.warning_desc));
-							    dialog2.setCancelable(false);
-							    dialog2.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(android.R.string.yes), new DialogInterface.OnClickListener() {
-							        public void onClick(DialogInterface dialog, int buttonId) {
-							            new File(Globals.fileToPatch+".bak").delete();
-							            new File(Globals.fileToPatch+".new").delete();
-							            new File(Globals.fileToPatch.substring(0,Globals.fileToPatch.lastIndexOf('/')+1)+ed.getText().toString()+((e.isChecked())?((Globals.fileToPatch.lastIndexOf('.')>-1)?Globals.fileToPatch.substring(Globals.fileToPatch.lastIndexOf('.'),Globals.fileToPatch.length()):""):"")).delete();
-							            if(d.isChecked()&&c.isChecked()&&e.isChecked()&&Globals.fileToPatch.lastIndexOf('.')>-1)
-							            {
-							            	ed.setText(ed.getText()+Globals.fileToPatch.substring(Globals.fileToPatch.lastIndexOf('.'),Globals.fileToPatch.length()));
-							            }
-							            patch(c.isChecked(), d.isChecked(), r.isChecked(), ed.getText().toString());
-							        }
-							    });
-							    dialog2.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
-							        public void onClick(DialogInterface dialog, int buttonId) {
-							          Toast t  = Toast.makeText(staticThis, getResources().getString(R.string.nopatch), Toast.LENGTH_SHORT);
-							          t.show();
-							        }
-							    });
-							    dialog2.show();
-							}else{
-								if(d.isChecked()&&c.isChecked()&&e.isChecked()&&Globals.fileToPatch.lastIndexOf('.')>-1)
-					            {
-					            	ed.setText(ed.getText()+Globals.fileToPatch.substring(Globals.fileToPatch.lastIndexOf('.'),Globals.fileToPatch.length()));
-					            }
-								patch(c.isChecked(), d.isChecked(), r.isChecked(), ed.getText().toString());
-							}	
+				        	
+				        	patchCheck();
 				        }
 				    });
 				    dialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
 				        public void onClick(DialogInterface dialog, int buttonId) {
 				          Toast t  = Toast.makeText(staticThis, getResources().getString(R.string.nopatch), Toast.LENGTH_SHORT);
 				          t.show();
+				          
 				        }
 				    });
 				    dialog.show();
 				}else{
-					if(d.isChecked()&&c.isChecked()&&e.isChecked()&&Globals.fileToPatch.lastIndexOf('.')>-1)
-		            {
-		            	ed.setText(ed.getText()+Globals.fileToPatch.substring(Globals.fileToPatch.lastIndexOf('.'),Globals.fileToPatch.length()));
-		            }
-					patch(c.isChecked(), d.isChecked(), r.isChecked(), ed.getText().toString());
+					patchCheck();
 				}
+				
+				
 				
 			}
 		});
 	}
 	
+	private void patchCheck()
+	{
+			if(new File(Globals.fileToPatch+".bak").exists()||(Globals.fileToPatch.toLowerCase(Locale.US).endsWith(".ecm")&&new File(Globals.fileToPatch.substring(0,Globals.fileToPatch.lastIndexOf('.'))).exists())||new File(Globals.fileToPatch+".new").exists()||(new File(Globals.fileToPatch.substring(0,Globals.fileToPatch.lastIndexOf('/')+1)+ed.getText().toString()+((e.isChecked())?((Globals.fileToPatch.lastIndexOf('.')>-1)?Globals.fileToPatch.substring(Globals.fileToPatch.lastIndexOf('.'),Globals.fileToPatch.length()):""):"")).exists()&&d.isChecked()&&c.isChecked()))
+			{
+				// Just try to interpret the following if statement. I dare you.
+        		System.out.println("bad");
+				AlertDialog dialog2 = new AlertDialog.Builder(staticThis).create();
+			    dialog2.setTitle(getResources().getString(R.string.warning));
+			    dialog2.setMessage(getResources().getString(R.string.warning_desc));
+			    dialog2.setCancelable(false);
+			    dialog2.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(android.R.string.yes), new DialogInterface.OnClickListener() {
+			        public void onClick(DialogInterface dialog, int buttonId) {
+			            new File(Globals.fileToPatch+".bak").delete();
+			            new File(Globals.fileToPatch+".new").delete();
+			            if(Globals.fileToPatch.toLowerCase(Locale.US).endsWith(".ecm"))
+			            	new File(Globals.fileToPatch.substring(0,Globals.fileToPatch.lastIndexOf('.'))).delete();
+			            new File(Globals.fileToPatch.substring(0,Globals.fileToPatch.lastIndexOf('/')+1)+ed.getText().toString()+((e.isChecked())?((Globals.fileToPatch.lastIndexOf('.')>-1)?Globals.fileToPatch.substring(Globals.fileToPatch.lastIndexOf('.'),Globals.fileToPatch.length()):""):"")).delete();
+			            if(d.isChecked()&&c.isChecked()&&e.isChecked()&&Globals.fileToPatch.lastIndexOf('.')>-1)
+		            	{
+							ed.setText(ed.getText()+Globals.fileToPatch.substring(Globals.fileToPatch.lastIndexOf('.'),Globals.fileToPatch.length()));
+		            	}
+						patch(c.isChecked(), d.isChecked(), r.isChecked(), ed.getText().toString());
+			        }
+			    });
+			    dialog2.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+			        public void onClick(DialogInterface dialog, int buttonId) {
+			          Toast t  = Toast.makeText(staticThis, getResources().getString(R.string.nopatch), Toast.LENGTH_SHORT);
+			          t.show();
+			        }
+			    });
+			    dialog2.show();	
+			}else{
+				if(d.isChecked()&&c.isChecked()&&e.isChecked()&&Globals.fileToPatch.lastIndexOf('.')>-1)
+            	{
+					ed.setText(ed.getText()+Globals.fileToPatch.substring(Globals.fileToPatch.lastIndexOf('.'),Globals.fileToPatch.length()));
+            	}
+				patch(c.isChecked(), d.isChecked(), r.isChecked(), ed.getText().toString());
+			}
+		
+	}
+	private boolean isPackageInstalled(String packagename, Context context) {
+	    PackageManager pm = context.getPackageManager();
+	    try {
+	        pm.getPackageInfo(packagename, PackageManager.GET_ACTIVITIES);
+	        return true;
+	    } catch (NameNotFoundException e) {
+	        return false;
+	    }
+	}
 	public void patch(final boolean c, final boolean d, final boolean r, final String ed)
 	{
 		final ProgressDialog myPd_ring=ProgressDialog.show(staticThis, getResources().getString(R.string.wait), getResources().getString(R.string.wait_desc), true);
@@ -407,6 +469,68 @@ public class MainActivity extends Activity {
 							{
 								msg=parseError(e, Globals.TYPE_BSDIFF);
 							}
+							
+						}else if(Globals.patchToApply.toLowerCase(Locale.US).endsWith(".aps")){
+							File f = new File(Globals.fileToPatch);
+							File f2 = new File(Globals.fileToPatch+".bak");
+							try {
+								Files.copy(f,f2);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+							byte[] gbaSig = {0x41, 0x50, 0x53, 0x31, 0x00};
+							byte[] n64Sig = {0x41, 0x50, 0x53, 0x31, 0x30};
+							byte[] realSig = new byte[5];
+							RandomAccessFile raf = null;
+							System.out.println("APS Patch");
+							try
+							{
+								raf = new RandomAccessFile(Globals.patchToApply, "r");
+							} catch (FileNotFoundException e1)
+							{
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+							try
+							{
+								raf.read(realSig);
+							} catch (IOException e1)
+							{
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+							if(Arrays.equals(realSig, gbaSig))
+							{
+								System.out.println("GBA APS");
+								APSGBAPatcher aa = new APSGBAPatcher();
+								aa.crcTableInit();
+								int e = 0;
+								try
+								{
+									e = aa.ApplyPatch(Globals.patchToApply, Globals.fileToPatch, r);
+								} catch (IOException e1)
+								{
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+									e = -5;
+								}
+								System.out.println("e: "+e);
+								if(e!=0)
+								{
+									msg=parseError(e, Globals.TYPE_APSGBA);
+								}
+							}else if(Arrays.equals(realSig, n64Sig))
+							{
+								System.out.println("N64 APS");
+								int e = apsN64PatchRom(Globals.fileToPatch, Globals.patchToApply);
+								if(e!=0)
+								{
+									msg=parseError(e, Globals.TYPE_APSN64);
+								}
+							}else{
+								msg=parseError(-131, -10000);
+							}
+							
 						}else if(Globals.patchToApply.toLowerCase(Locale.US).endsWith(".ppf")){
 							File f = new File(Globals.fileToPatch);
 							File f2 = new File(Globals.fileToPatch+".bak");
@@ -427,6 +551,34 @@ public class MainActivity extends Activity {
 							{
 								msg=parseError(e, Globals.TYPE_XDELTA1);
 							}	
+						}else if(Globals.patchToApply.toLowerCase(Locale.US).endsWith(".asm"))
+						{
+							File f = new File(Globals.fileToPatch);
+							File f2 = new File(Globals.fileToPatch+".bak");
+							try {
+								Files.copy(f,f2);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+							int e = asmPatchRom(Globals.fileToPatch, Globals.patchToApply);
+							if(e!=0)
+							{
+								msg=parseError(e, Globals.TYPE_ASM);
+							}
+						}else if(Globals.patchToApply.toLowerCase(Locale.US).endsWith(".dldi"))
+						{
+							File f = new File(Globals.fileToPatch);
+							File f2 = new File(Globals.fileToPatch+".bak");
+							try {
+								Files.copy(f,f2);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+							int e = dldiPatchRom(Globals.fileToPatch, Globals.patchToApply);
+							if(e!=0)
+							{
+								msg=parseError(e, Globals.TYPE_DLDI);
+							}
 						}else{
 							RandomAccessFile f= null;
 							try {
@@ -470,6 +622,8 @@ public class MainActivity extends Activity {
 							}
 							
 						}
+						if(Globals.patchToApply.toLowerCase(Locale.US).endsWith(".asm")&&!Globals.didAnAsm)
+							Globals.didAnAsm=true;
 						if(Globals.patchToApply.toLowerCase(Locale.US).endsWith(".ups")||Globals.patchToApply.toLowerCase(Locale.US).endsWith(".xdelta")||Globals.patchToApply.toLowerCase(Locale.US).endsWith(".xdelta3")||Globals.patchToApply.toLowerCase(Locale.US).endsWith(".vcdiff")||Globals.patchToApply.toLowerCase(Locale.US).endsWith(".patch")||Globals.patchToApply.toLowerCase(Locale.US).endsWith(".bps")||Globals.patchToApply.toLowerCase(Locale.US).endsWith(".bsdiff")||Globals.patchToApply.toLowerCase(Locale.US).endsWith(".dps"))
 						{
 							File oldrom = new File(Globals.fileToPatch);
@@ -491,6 +645,8 @@ public class MainActivity extends Activity {
 								File one = new File(Globals.fileToPatch+".bak");
 								File two = new File(Globals.fileToPatch);
 								File three = new File(Globals.fileToPatch.substring(0,Globals.fileToPatch.lastIndexOf('/')+1)+ed);
+								Log.e("Swegh", "Renaming to: "+three.getAbsolutePath());
+								
 								two.renameTo(three);
 								File four = new File(Globals.fileToPatch);
 								one.renameTo(four);	
@@ -508,8 +664,8 @@ public class MainActivity extends Activity {
 							{
 								e=ecmPatchRom(Globals.fileToPatch,Globals.fileToPatch.substring(0,Globals.fileToPatch.lastIndexOf('/'))+ed,1);
 							}else{
-								new File(Globals.fileToPatch).renameTo(new File(Globals.fileToPatch+".bak"));
-								e=ecmPatchRom(Globals.fileToPatch+".bak",Globals.fileToPatch,1);
+								//new File(Globals.fileToPatch).renameTo(new File(Globals.fileToPatch+".bak"));
+								e=ecmPatchRom(Globals.fileToPatch,Globals.fileToPatch.substring(0,Globals.fileToPatch.lastIndexOf('.')),1);
 							}
 						}else{
 							e=ecmPatchRom(Globals.fileToPatch, "",0);
@@ -522,6 +678,7 @@ public class MainActivity extends Activity {
 		        	}else{
 						Globals.msg=getResources().getString(R.string.fnf);
 					}
+		        	
 		        }
 		    }).start();
 			new Thread(new Runnable() {                 
@@ -537,6 +694,47 @@ public class MainActivity extends Activity {
 						    t.show();
 				        }
 				    });
+				    final SharedPreferences prefs = PreferenceManager
+				            .getDefaultSharedPreferences(MainActivity.this);
+				    int x = prefs.getInt("purchaseNag", 5);
+				    if(x!=-1)
+				    {
+				    	if(isPackageInstalled("com.xperia64.timidityae", MainActivity.this))
+				    	{
+				    		prefs.edit().putInt("purchaseNag", -1);
+				    	}else{
+				    	
+				    /*if(x>=5)
+				    {
+				    	
+				    	prefs.edit().putInt("purchaseNag", 0).commit();
+				    	runOnUiThread(new Runnable() {
+					        public void run() {
+				    	AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
+				    	b.setTitle("Timidity AE");
+				    	b.setIcon(getResources().getDrawable(R.drawable.timidity));
+				    	b.setMessage(getResources().getString(R.string.nagMsg));
+				    	b.setCancelable(false);
+				    	b.setNegativeButton(getResources().getString(android.R.string.cancel), new OnClickListener(){@Override public void onClick(DialogInterface arg0, int arg1) {}});
+				    	b.setPositiveButton(getResources().getString(R.string.nagInfo), new OnClickListener(){
+
+							@Override
+							public void onClick(DialogInterface arg0, int arg1) {
+								try {
+								    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.xperia64.timidityae")));
+								} catch (android.content.ActivityNotFoundException anfe) {
+								    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=com.xperia64.timidityae")));
+								}
+							}
+				    		});
+				    			b.create().show();
+					        	}
+				    		}); // end of UIThread
+				    	}else{
+				    		prefs.edit().putInt("purchaseNag", x+1).commit();
+				    	}*/
+				    }
+				    }
 				    Thread.sleep(3000); // Wait to clear Globals.msg
 				    Globals.msg="";
 				  }catch(Exception e){}
@@ -549,7 +747,6 @@ public class MainActivity extends Activity {
 		if(KeyCode == KeyEvent.KEYCODE_BACK)
 		{
 			System.exit(0);
-
 		}
 		return true;
 	}
@@ -742,6 +939,40 @@ public class MainActivity extends Activity {
 					return getResources().getString(R.string.dpsNegativeThree);
 				default:
 					return getResources().getString(R.string.dpsDefault)+e;
+				}
+			case Globals.TYPE_ASM:
+				switch(e)
+				{
+				default:
+					return getResources().getString(R.string.asmDefault)+e;
+				}
+			case Globals.TYPE_DLDI:
+				switch(e)
+				{
+				default:
+					return getResources().getString(R.string.dldiDefault)+e;
+				}
+			case Globals.TYPE_APSN64:
+				switch(e)
+				{
+				default:
+					return getResources().getString(R.string.apsn64Default)+e;
+				}
+			case Globals.TYPE_APSGBA:
+				switch(e)
+				{
+				case -1:
+					return getResources().getString(R.string.apsgbaNegativeOne);
+				case -2:
+					return getResources().getString(R.string.apsgbaNegativeTwo);
+				case -3:
+					return getResources().getString(R.string.apsgbaNegativeThree);
+				case -4:
+					return getResources().getString(R.string.apsgbaNegativeFour);
+				case -5:
+					return getResources().getString(R.string.apsgbaNegativeFive);
+				default:
+					return getResources().getString(R.string.apsgbaDefault)+e;
 				}
 			default:
 				return getResources().getString(R.string.errorDefault);

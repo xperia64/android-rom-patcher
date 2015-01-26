@@ -22,6 +22,7 @@ int Java_com_xperia64_rompatcher_MainActivity_dpsPatchRom(JNIEnv * env, jobject 
 	err=dpspatch(4, filez);
 	(*env)->ReleaseStringUTFChars(env, romPath, szRomPath); 
 	(*env)->ReleaseStringUTFChars(env, outFile, szOutFile); 
-	(*env)->ReleaseStringUTFChars(env, patchPath, szPatchPath); 
+	(*env)->ReleaseStringUTFChars(env, patchPath, szPatchPath);
+	free(filez);
 	return err;
 }

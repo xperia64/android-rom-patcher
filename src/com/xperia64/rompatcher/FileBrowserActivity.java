@@ -22,6 +22,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+
 import android.app.ListActivity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -40,7 +42,7 @@ public class FileBrowserActivity extends ListActivity {
 	private List<String> path = null;
 	private String rootsd=Environment.getExternalStorageDirectory().getAbsolutePath();
 	private String tmpitem="ROOT";
-	private String extensions = "*.ips*.ups*.xdelta*.xdelta3*.vcdiff*.bps*.bsdiff*.ppf*.patch*.dps*";
+	private String extensions = "*.aps*.ips*.ups*.xdelta*.xdelta3*.vcdiff*.bps*.bsdiff*.ppf*.patch*.dps*.asm*.dldi*";
 	TextView myPath;
 
 
@@ -113,19 +115,24 @@ public class FileBrowserActivity extends ListActivity {
 					int dotPosition = files[i].getName().lastIndexOf(".");
 					String extension="";
 					if (dotPosition != -1) {
-						extension = (files[i].getName().substring(dotPosition)).toLowerCase();
+						extension = (files[i].getName().substring(dotPosition)).toLowerCase(Locale.US);
 						if(extensions!=null)
 						{
 							if(extension!=null){
 
 								if(extensions.contains("*"+extension+"*")&&(!Globals.mode)||((Globals.mode)&&!(extensions.contains("*"+extension+"*")))){
-
 									path.add(file.getPath());
 									item.add(file.getName());
 								}
 							}else if(files[i].getName().endsWith("/")){
 								path.add(file.getPath()+"/");
-								item.add(file.getName()+"/");}}
+								item.add(file.getName()+"/");}else{
+									path.add(file.getPath());
+									item.add(file.getName());}
+								}
+					}else{
+						path.add(file.getPath());
+						item.add(file.getName());
 					}
 				}else{
 
@@ -146,6 +153,7 @@ public class FileBrowserActivity extends ListActivity {
 				new ArrayAdapter<String>(this, R.layout.row, item);
 
 		setListAdapter(fileList);
+		getListView().setFastScrollEnabled(true);
 		}else{
 			getDir("/");
 		}
