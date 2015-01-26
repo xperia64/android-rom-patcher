@@ -1,6 +1,6 @@
 ROM Patcher:
 This is a basic ROM Patcher for android that supports IPS, IPS32, BPS, 
-UPS, XDELTA1, XDELTA3, PPF, DPS, ASM, DLDI, and BSDIFF patch files. It 
+UPS, XDELTA1, XDELTA3, PPF, DPS, ASM, DLDI, APS, and BSDIFF patch files. It 
 can also 
 decompress ECM files. This is also the first open source rom patcher to support the IPS32 patch type. This project is 
 licensed under GPLv3, with all components under some form of GPL with 
