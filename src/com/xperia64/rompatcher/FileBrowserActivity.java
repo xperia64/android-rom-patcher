@@ -42,7 +42,7 @@ public class FileBrowserActivity extends ListActivity {
 	private List<String> path = null;
 	private String rootsd=Environment.getExternalStorageDirectory().getAbsolutePath();
 	private String tmpitem="ROOT";
-	private String extensions = "*.aps*.ips*.ups*.xdelta*.xdelta3*.vcdiff*.bps*.bsdiff*.ppf*.patch*.dps*.asm*.dldi*";
+	private String extensions = "*.aps*.ips*.ups*.xdelta*.xdelta3*.vcdiff*.bps*.bsdiff*.ppf*.patch*.dps*.asm*.dldi*.xpc*";
 	TextView myPath;
 
 

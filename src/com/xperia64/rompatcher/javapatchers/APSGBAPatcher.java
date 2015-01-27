@@ -28,7 +28,7 @@ import java.util.Arrays;
 
 public class APSGBAPatcher {
 	
-	
+	// Original APS format by HackMew.
 	// I am literally just porting VB5 to Java. That's why this is so terrible.
 		private final byte[] lSignature  = {0x41, 0x50, 0x53, 0x31};
 		private final int lChunkBytes = 65536; //// 64k	

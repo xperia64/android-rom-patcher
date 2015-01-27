@@ -40,4 +40,5 @@ public class Globals {
 	public static final int TYPE_DLDI=11;
 	public static final int TYPE_APSN64=12;
 	public static final int TYPE_APSGBA=13;
+	public static final int TYPE_XPC=14;
 }

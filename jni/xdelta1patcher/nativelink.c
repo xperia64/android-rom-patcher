@@ -2,7 +2,6 @@
 	Native JNI linkage
 						*/
 #include <jni.h>
-#include <android/log.h>
 #include <stdio.h>
 #include <glib.h>
 extern gint    main    (gint argc, gchar** argv);

@@ -132,5 +132,8 @@
 	<string name="apsgbaNegativeFive">APSGBA: I/O error</string>
 	<string name="apsgbaDefault">APSGBA: Unknown error: </string>
 	<!-- End APSGBA Errors -->
+	<!-- XPC Errors -->
+	<string name="xpcDefault">XPC: Unknown error: </string>
+	<!-- End XPC Errors -->
 	<string name="errorDefault">Patch type invalid.</string>
 </resources>

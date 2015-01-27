@@ -73,6 +73,7 @@ public class MainActivity extends Activity {
 	public static native int ppfPatchRom(String romPath, String patchPath, int jignoreChecksum);
 	public static native int asmPatchRom(String romPath, String patchPath);
 	public static native int dldiPatchRom(String romPath, String patchPath);
+	public static native int xpcPatchRom(String romPatch, String patchPath, String outputFile);
 	Context staticThis;
 	CheckBox c;// = (CheckBox) findViewById(R.id.backupCheckbox);
 	CheckBox d;// = (CheckBox) findViewById(R.id.altNameCheckbox);
@@ -197,6 +198,12 @@ public class MainActivity extends Activity {
 		}
 		catch( UnsatisfiedLinkError e) {
 			Log.e("Bad:","Cannot grab dldipatcher!");
+		}
+		try {
+			System.loadLibrary("xpcpatcher");  
+		}
+		catch( UnsatisfiedLinkError e) {
+			Log.e("Bad:","Cannot grab xpcpatcher!");
 		}
 		setContentView(R.layout.main);
 		
@@ -579,6 +586,13 @@ public class MainActivity extends Activity {
 							{
 								msg=parseError(e, Globals.TYPE_DLDI);
 							}
+						}else if(Globals.patchToApply.toLowerCase(Locale.US).endsWith(".xpc"))
+						{
+							int e = xpcPatchRom(Globals.fileToPatch, Globals.patchToApply, Globals.fileToPatch+".new");
+							if(e!=0)
+							{
+								msg=parseError(e, Globals.TYPE_XPC);
+							}
 						}else{
 							RandomAccessFile f= null;
 							try {
@@ -624,7 +638,15 @@ public class MainActivity extends Activity {
 						}
 						if(Globals.patchToApply.toLowerCase(Locale.US).endsWith(".asm")&&!Globals.didAnAsm)
 							Globals.didAnAsm=true;
-						if(Globals.patchToApply.toLowerCase(Locale.US).endsWith(".ups")||Globals.patchToApply.toLowerCase(Locale.US).endsWith(".xdelta")||Globals.patchToApply.toLowerCase(Locale.US).endsWith(".xdelta3")||Globals.patchToApply.toLowerCase(Locale.US).endsWith(".vcdiff")||Globals.patchToApply.toLowerCase(Locale.US).endsWith(".patch")||Globals.patchToApply.toLowerCase(Locale.US).endsWith(".bps")||Globals.patchToApply.toLowerCase(Locale.US).endsWith(".bsdiff")||Globals.patchToApply.toLowerCase(Locale.US).endsWith(".dps"))
+						if(Globals.patchToApply.toLowerCase(Locale.US).endsWith(".ups")||
+								Globals.patchToApply.toLowerCase(Locale.US).endsWith(".xdelta")||
+								Globals.patchToApply.toLowerCase(Locale.US).endsWith(".xdelta3")||
+								Globals.patchToApply.toLowerCase(Locale.US).endsWith(".vcdiff")||
+								Globals.patchToApply.toLowerCase(Locale.US).endsWith(".patch")||
+								Globals.patchToApply.toLowerCase(Locale.US).endsWith(".bps")||
+								Globals.patchToApply.toLowerCase(Locale.US).endsWith(".bsdiff")||
+								Globals.patchToApply.toLowerCase(Locale.US).endsWith(".dps")||
+								Globals.patchToApply.toLowerCase(Locale.US).endsWith(".xpc"))
 						{
 							File oldrom = new File(Globals.fileToPatch);
 							File bkrom = new File(Globals.fileToPatch+".bak");
@@ -973,6 +995,12 @@ public class MainActivity extends Activity {
 					return getResources().getString(R.string.apsgbaNegativeFive);
 				default:
 					return getResources().getString(R.string.apsgbaDefault)+e;
+				}
+			case Globals.TYPE_XPC:
+				switch(e)
+				{
+				default:
+					return getResources().getString(R.string.xpcDefault)+e;
 				}
 			default:
 				return getResources().getString(R.string.errorDefault);
