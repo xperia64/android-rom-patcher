@@ -18,12 +18,12 @@
  ******************************************************************************/
 package com.xperia64.rompatcher;
 
-
-
-
 import com.google.common.io.Files;
 import com.xperia64.rompatcher.R;
 import com.xperia64.rompatcher.javapatchers.APSGBAPatcher;
+import com.xperia64.rompatcher.javapatchers.nsmbe.ROM;
+import com.xperia64.rompatcher.javapatchers.nsmbe.dsfilesystem.NitroROMFilesystem;
+import com.xperia64.rompatcher.javapatchers.nsmbe.patcher.RealPatch;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -39,12 +39,14 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 //import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 //import android.net.Uri;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.KeyEvent;
@@ -73,7 +75,8 @@ public class MainActivity extends Activity {
 	public static native int ppfPatchRom(String romPath, String patchPath, int jignoreChecksum);
 	public static native int asmPatchRom(String romPath, String patchPath);
 	public static native int dldiPatchRom(String romPath, String patchPath);
-	public static native int xpcPatchRom(String romPatch, String patchPath, String outputFile);
+	public static native int xpcPatchRom(String romPath, String patchPath, String outputFile);
+	public static native int asarPatchRom(String romPath, String patchPath, int jignoreChecksum);
 	Context staticThis;
 	CheckBox c;// = (CheckBox) findViewById(R.id.backupCheckbox);
 	CheckBox d;// = (CheckBox) findViewById(R.id.altNameCheckbox);
@@ -204,6 +207,12 @@ public class MainActivity extends Activity {
 		}
 		catch( UnsatisfiedLinkError e) {
 			Log.e("Bad:","Cannot grab xpcpatcher!");
+		}
+		try {
+			System.loadLibrary("asarpatcher");  
+		}
+		catch( UnsatisfiedLinkError e) {
+			Log.e("Bad:","Cannot grab asarpatcher!");
 		}
 		setContentView(R.layout.main);
 		
@@ -355,9 +364,10 @@ public class MainActivity extends Activity {
 	
 	private void patchCheck()
 	{
+		// Just try to interpret the following if statement. I dare you.
 			if(new File(Globals.fileToPatch+".bak").exists()||(Globals.fileToPatch.toLowerCase(Locale.US).endsWith(".ecm")&&new File(Globals.fileToPatch.substring(0,Globals.fileToPatch.lastIndexOf('.'))).exists())||new File(Globals.fileToPatch+".new").exists()||(new File(Globals.fileToPatch.substring(0,Globals.fileToPatch.lastIndexOf('/')+1)+ed.getText().toString()+((e.isChecked())?((Globals.fileToPatch.lastIndexOf('.')>-1)?Globals.fileToPatch.substring(Globals.fileToPatch.lastIndexOf('.'),Globals.fileToPatch.length()):""):"")).exists()&&d.isChecked()&&c.isChecked()))
 			{
-				// Just try to interpret the following if statement. I dare you.
+				
         		System.out.println("bad");
 				AlertDialog dialog2 = new AlertDialog.Builder(staticThis).create();
 			    dialog2.setTitle(getResources().getString(R.string.warning));
@@ -404,12 +414,17 @@ public class MainActivity extends Activity {
 	}
 	public void patch(final boolean c, final boolean d, final boolean r, final String ed)
 	{
-		final ProgressDialog myPd_ring=ProgressDialog.show(staticThis, getResources().getString(R.string.wait), getResources().getString(R.string.wait_desc), true);
+		final ProgressDialog myPd_ring=ProgressDialog.show(MainActivity.this, getResources().getString(R.string.wait), getResources().getString(R.string.wait_desc), true);
         myPd_ring.setCancelable(false);
 			new Thread(new Runnable() {
 		        public void run(){
 		        	if(new File(Globals.patchToApply).exists()&& new File(Globals.fileToPatch).exists()&& !Globals.fileToPatch.toLowerCase(Locale.US).endsWith(".ecm")){
 		        		String msg=getResources().getString(R.string.success);
+		        		if(!new File(Globals.fileToPatch).canWrite())
+		        		{
+		        			Globals.msg=msg="Can not write to output file. If you are on KitKat or Lollipop, move the file to your internal storage.";
+		        					return;
+		        		}
 						if(Globals.patchToApply.toLowerCase(Locale.US).endsWith(".ups"))
 						{
 							int e = upsPatchRom(Globals.fileToPatch, Globals.patchToApply, Globals.fileToPatch+".new", r ? 1 : 0);
@@ -423,6 +438,8 @@ public class MainActivity extends Activity {
 								f = new RandomAccessFile(Globals.patchToApply, "r");
 							} catch (FileNotFoundException e1) {
 								e1.printStackTrace();
+								Globals.msg=msg=getResources().getString(R.string.fnf);
+								return;
 							}
 							StringBuilder s = new StringBuilder();
 							try {
@@ -497,15 +514,19 @@ public class MainActivity extends Activity {
 							{
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
+								Globals.msg=msg=getResources().getString(R.string.fnf);
+								return;
 							}
 							try
 							{
 								raf.read(realSig);
+								raf.close();
 							} catch (IOException e1)
 							{
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}
+							
 							if(Arrays.equals(realSig, gbaSig))
 							{
 								System.out.println("GBA APS");
@@ -567,7 +588,11 @@ public class MainActivity extends Activity {
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
-							int e = asmPatchRom(Globals.fileToPatch, Globals.patchToApply);
+							int e;
+							if(Globals.asar)
+								e = asarPatchRom(Globals.fileToPatch, Globals.patchToApply, r?1:0);
+							else
+								e = asmPatchRom(Globals.fileToPatch, Globals.patchToApply);
 							if(e!=0)
 							{
 								msg=parseError(e, Globals.TYPE_ASM);
@@ -593,12 +618,34 @@ public class MainActivity extends Activity {
 							{
 								msg=parseError(e, Globals.TYPE_XPC);
 							}
+							
+						}else if(Globals.patchToApply.toLowerCase(Locale.US).endsWith(".nmp"))
+						{
+							File f = new File(Globals.fileToPatch);
+							File f2 = new File(Globals.fileToPatch+".bak");
+							try {
+								Files.copy(f,f2);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+							NitroROMFilesystem fs;
+							try {
+								fs = new NitroROMFilesystem(Globals.fileToPatch);
+								ROM.load(fs);
+								RealPatch.patch(Globals.patchToApply, new Object());
+								ROM.close();
+							} catch (Exception e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}					
 						}else{
 							RandomAccessFile f= null;
 							try {
 								f = new RandomAccessFile(Globals.patchToApply, "r");
 							} catch (FileNotFoundException e1) {
 								e1.printStackTrace();
+								Globals.msg=msg=getResources().getString(R.string.fnf);
+								return;
 							}
 							StringBuilder s = new StringBuilder();
 							try {
@@ -636,8 +683,6 @@ public class MainActivity extends Activity {
 							}
 							
 						}
-						if(Globals.patchToApply.toLowerCase(Locale.US).endsWith(".asm")&&!Globals.didAnAsm)
-							Globals.didAnAsm=true;
 						if(Globals.patchToApply.toLowerCase(Locale.US).endsWith(".ups")||
 								Globals.patchToApply.toLowerCase(Locale.US).endsWith(".xdelta")||
 								Globals.patchToApply.toLowerCase(Locale.US).endsWith(".xdelta3")||
@@ -708,33 +753,35 @@ public class MainActivity extends Activity {
 				public void run() {
 				try
 				   {
-				    while(Globals.msg.equals(""));
+				    while(Globals.msg.equals("")){Thread.sleep(25);};
 				    myPd_ring.dismiss();
 				    runOnUiThread(new Runnable() {
 				        public void run() {
 				        	Toast t = Toast.makeText(staticThis, Globals.msg, Toast.LENGTH_SHORT);
 						    t.show();
+						    Globals.msg="";
 				        }
 				    });
+				    if(Globals.msg.equals(getResources().getString(R.string.success))) // Don't annoy people who did something wrong even further
+				    {
 				    final SharedPreferences prefs = PreferenceManager
 				            .getDefaultSharedPreferences(MainActivity.this);
 				    int x = prefs.getInt("purchaseNag", 5);
 				    if(x!=-1)
 				    {
-				    	if(isPackageInstalled("com.xperia64.timidityae", MainActivity.this))
+				    	if((isPackageInstalled("com.xperia64.timidityae", MainActivity.this)||isPackageInstalled("com.xperia64.rompatcher.donation", MainActivity.this)))
 				    	{
 				    		prefs.edit().putInt("purchaseNag", -1);
 				    	}else{
-				    	
-				    /*if(x>=5)
+				    if(x>=5)
 				    {
 				    	
 				    	prefs.edit().putInt("purchaseNag", 0).commit();
 				    	runOnUiThread(new Runnable() {
 					        public void run() {
 				    	AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
-				    	b.setTitle("Timidity AE");
-				    	b.setIcon(getResources().getDrawable(R.drawable.timidity));
+				    	b.setTitle("Like ROM Patcher?");
+				    	b.setIcon(getResources().getDrawable(R.drawable.icon_pro));
 				    	b.setMessage(getResources().getString(R.string.nagMsg));
 				    	b.setCancelable(false);
 				    	b.setNegativeButton(getResources().getString(android.R.string.cancel), new OnClickListener(){@Override public void onClick(DialogInterface arg0, int arg1) {}});
@@ -743,9 +790,9 @@ public class MainActivity extends Activity {
 							@Override
 							public void onClick(DialogInterface arg0, int arg1) {
 								try {
-								    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.xperia64.timidityae")));
+								    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.xperia64.rompatcher.donation")));
 								} catch (android.content.ActivityNotFoundException anfe) {
-								    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=com.xperia64.timidityae")));
+								    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=com.xperia64.rompatcher.donation")));
 								}
 							}
 				    		});
@@ -754,11 +801,11 @@ public class MainActivity extends Activity {
 				    		}); // end of UIThread
 				    	}else{
 				    		prefs.edit().putInt("purchaseNag", x+1).commit();
-				    	}*/
+				    	}
 				    }
 				    }
-				    Thread.sleep(3000); // Wait to clear Globals.msg
-				    Globals.msg="";
+				    }
+
 				  }catch(Exception e){}
 				 }
 				 }).start();
