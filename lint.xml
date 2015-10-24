@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
+    <issue id="IconLocation" severity="ignore" />
     <issue id="MangledCRLF" severity="warning" />
+    <issue id="MissingTranslation" severity="ignore" />
+    <issue id="OldTargetApi" severity="ignore" />
+    <issue id="TextFields" severity="ignore" />
+    <issue id="UnusedResources" severity="ignore" />
 </lint>

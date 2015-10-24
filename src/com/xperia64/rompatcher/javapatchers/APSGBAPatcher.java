@@ -87,6 +87,7 @@ public class APSGBAPatcher {
 		    return Crc16;
 		}
 		
+		@SuppressWarnings("resource")
 		private void TruncateFile(String FileName, int Size) throws IOException
 		{
 			File f = new File(FileName);
@@ -120,6 +121,7 @@ public class APSGBAPatcher {
 			rPatch.read(inttemp);
 			if(!Arrays.equals(inttemp, lSignature))
 			{
+				rPatch.close();
 				return -1;
 			}
 			
@@ -156,7 +158,11 @@ public class APSGBAPatcher {
 		        if(iCrc16 == tPatch.iCrc16_1 ) // Called when patching a clean file
 		        {
 		        	if(fIsModified&&fIsOriginal)
+		        	{
+		        		rOrig.close();
+		    		    rPatch.close();
 		        		return -2;
+		        	}
 
 		        	rOrig.seek(tPatch.lOffset);
 		        	rOrig.write(bByteArray1);
@@ -165,7 +171,11 @@ public class APSGBAPatcher {
 		        }else if( iCrc16 == tPatch.iCrc16_2 ) // Called when restoring the file to its original state
 		        {   
 		        	if(fIsModified&&fIsOriginal)
+		        	{
+		        		rOrig.close();
+		    		    rPatch.close();
 		        		return -3;
+		        	}
 		        	rOrig.seek(tPatch.lOffset);
 		        	rOrig.write(bByteArray1);
 		        	fIsModified = true;
@@ -177,6 +187,8 @@ public class APSGBAPatcher {
 		        	rOrig.write(bByteArray1);
 		        	fIsOriginal = true;
 		        }else{
+		        	rOrig.close();
+				    rPatch.close();
 		        	return -4;
 		        }
 		    }

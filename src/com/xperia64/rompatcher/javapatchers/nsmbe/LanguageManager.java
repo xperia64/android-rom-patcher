@@ -1,5 +1,7 @@
 ﻿package com.xperia64.rompatcher.javapatchers.nsmbe;
 
+import android.text.TextUtils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -38,7 +40,7 @@ import java.util.HashMap;
 
             for(String Line : LangFile) {
                 String CheckLine = Line.trim();
-                if (CheckLine.isEmpty()) continue;
+                if (TextUtils.isEmpty(CheckLine)) continue;
                 if (CheckLine.charAt(0) == ';') continue;
 
                 if (CheckLine.startsWith("[") && CheckLine.endsWith("]")) {

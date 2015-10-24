@@ -18,11 +18,11 @@
     <string name="zip_warning_desc">The file you are trying to patch looks like a zip file. You probably want to extract it first. Patch anyway?</string>
     <string name="nopatch">Patching canceled</string>
     <string name="wait">Please wait</string>
-    <string name="wait_desc">Patching rom...</string>
+    <string name="wait_desc">Patching rom…</string>
     <string name="success">Patching successful.</string>
     <string name="fnf">File not found.</string>
     <string name="nagInfo">More Info</string>
-    <string name="nagMsg">Consider purchasing my other app, Timidity AE, to support future developments of ROM Patcher</string>
+    <string name="nagMsg">Consider purchasing ROM Patcher (Donation) to support future development</string>
     <!-- UPS Errors -->
     <string name="upsNegativeOne">UPS: Input file cannot be opened.</string>
     <string name="upsNegativeTwo">UPS: Output file cannot be opened.</string>
@@ -135,5 +135,10 @@
 	<!-- XPC Errors -->
 	<string name="xpcDefault">XPC: Unknown error: </string>
 	<!-- End XPC Errors -->
+	<!-- NMP Errors -->
+	<string name="nmpDefault">NMP: %1$s (%2$d)</string>
+	<!-- End NMP Errors -->
 	<string name="errorDefault">Patch type invalid.</string>
+	<string name="drmwarning">Not Available</string>
+	<string name="drmwarning_desc">NMP support is only available in the donation version. View Google Play Page?</string>
 </resources>

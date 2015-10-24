@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.Locale;
 
 import android.text.InputFilter;
+import android.text.TextUtils;
 import android.util.Log;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -87,6 +88,8 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		staticThis=MainActivity.this;
+
+		setContentView(R.layout.main);
 		// Load native libraries
 		try {
 			System.loadLibrary("apsn64patcher");  
@@ -191,12 +194,6 @@ public class MainActivity extends Activity {
 			Log.e("Bad:","Cannot grab dpspatcher!");
 		}
 		try {
-			System.loadLibrary("asmpatcher");  
-		}
-		catch( UnsatisfiedLinkError e) {
-			Log.e("Bad:","Cannot grab asmpatcher!");
-		}
-		try {
 			System.loadLibrary("dldipatcher");  
 		}
 		catch( UnsatisfiedLinkError e) {
@@ -214,8 +211,12 @@ public class MainActivity extends Activity {
 		catch( UnsatisfiedLinkError e) {
 			Log.e("Bad:","Cannot grab asarpatcher!");
 		}
-		setContentView(R.layout.main);
-		
+		try {
+			System.loadLibrary("asmpatcher");  
+		}
+		catch( UnsatisfiedLinkError e) {
+			Log.e("Bad:","Cannot grab asmpatcher!");
+		}
 		c = (CheckBox) findViewById(R.id.backupCheckbox);
 		d = (CheckBox) findViewById(R.id.altNameCheckbox);
 		r = (CheckBox) findViewById(R.id.ignoreCRC);
@@ -502,6 +503,7 @@ public class MainActivity extends Activity {
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
+							// Wow.
 							byte[] gbaSig = {0x41, 0x50, 0x53, 0x31, 0x00};
 							byte[] n64Sig = {0x41, 0x50, 0x53, 0x31, 0x30};
 							byte[] realSig = new byte[5];
@@ -621,23 +623,67 @@ public class MainActivity extends Activity {
 							
 						}else if(Globals.patchToApply.toLowerCase(Locale.US).endsWith(".nmp"))
 						{
-							File f = new File(Globals.fileToPatch);
-							File f2 = new File(Globals.fileToPatch+".bak");
-							try {
-								Files.copy(f,f2);
-							} catch (IOException e) {
-								e.printStackTrace();
+							
+							String drm = MainActivity.this.getPackageName();
+							System.out.println("Drm is: " +drm);
+							if(drm.equals("com.xperia64.rompatcher.donation"))
+							{
+								if(c)
+								{
+									File f = new File(Globals.fileToPatch);
+									File f2 = new File(Globals.fileToPatch+".bak");
+									try {
+										Files.copy(f,f2);
+									} catch (IOException e) {
+										e.printStackTrace();
+									}
+								}
+								NitroROMFilesystem fs;
+								try {
+									fs = new NitroROMFilesystem(Globals.fileToPatch);
+									ROM.load(fs);
+									RealPatch.patch(Globals.patchToApply, new Object());
+									ROM.close();
+								} catch (Exception e1) {
+									// TODO Auto-generated catch block
+									//e1.printStackTrace();
+									Globals.msg=msg=String.format(getResources().getString(R.string.nmpDefault),e1.getStackTrace()[0].getFileName(),e1.getStackTrace()[0].getLineNumber());
+								}
+								if(c&&d&&!TextUtils.isEmpty(ed))
+								{
+									File f = new File(Globals.fileToPatch);
+									File f3 = new File(Globals.fileToPatch+".bak");
+									File f2 = new File(Globals.fileToPatch.substring(0,Globals.fileToPatch.lastIndexOf('/')+1)+ed);
+									f.renameTo(f2);
+									f3.renameTo(f);
+								}
+							}else{
+								Globals.msg=msg=getResources().getString(R.string.drmwarning);
+								MainActivity.this.runOnUiThread(new Runnable(){
+									public void run()
+									{
+										AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
+								    	b.setTitle(getResources().getString(R.string.drmwarning));
+								    	b.setIcon(getResources().getDrawable(R.drawable.icon_pro));
+								    	b.setMessage(getResources().getString(R.string.drmwarning_desc));
+								    	b.setCancelable(false);
+								    	b.setNegativeButton(getResources().getString(android.R.string.cancel), new OnClickListener(){@Override public void onClick(DialogInterface arg0, int arg1) {}});
+								    	b.setPositiveButton(getResources().getString(R.string.nagInfo), new OnClickListener(){
+
+											@Override
+											public void onClick(DialogInterface arg0, int arg1) {
+												try {
+												    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.xperia64.rompatcher.donation")));
+												} catch (android.content.ActivityNotFoundException anfe) {
+												    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=com.xperia64.rompatcher.donation")));
+												}
+											}
+								    		});
+								    	b.create().show();
+									}
+								});
 							}
-							NitroROMFilesystem fs;
-							try {
-								fs = new NitroROMFilesystem(Globals.fileToPatch);
-								ROM.load(fs);
-								RealPatch.patch(Globals.patchToApply, new Object());
-								ROM.close();
-							} catch (Exception e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}					
+						
 						}else{
 							RandomAccessFile f= null;
 							try {
@@ -712,8 +758,6 @@ public class MainActivity extends Activity {
 								File one = new File(Globals.fileToPatch+".bak");
 								File two = new File(Globals.fileToPatch);
 								File three = new File(Globals.fileToPatch.substring(0,Globals.fileToPatch.lastIndexOf('/')+1)+ed);
-								Log.e("Swegh", "Renaming to: "+three.getAbsolutePath());
-								
 								two.renameTo(three);
 								File four = new File(Globals.fileToPatch);
 								one.renameTo(four);	

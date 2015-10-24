@@ -25,7 +25,9 @@ template<typename t> void error(int neededpass, const char * str);
 
 #define clean(string) do { string.qreplace("\t", " ", true); string.qreplace(", ", ",", true); string.qreplace("  ", " ", true); \
 											itrim(string.str, " ", " ", true); } while(0)
-
+#ifndef stricmp
+#define stricmp(...) strcasecmp(__VA_ARGS__)
+#endif
 //void write1(unsigned int num);
 //void write2(unsigned int num);
 //void write3(unsigned int num);

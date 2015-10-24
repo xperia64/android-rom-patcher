@@ -1541,7 +1541,7 @@ assume.f_mx=assume.f_db=assume.f_d=0;
   }
 file_count=0;
 }
-int main(int argc, char **argv) {
+int xkas_main(int argc, char **argv) {
 char sfn[256], dfn[256];
 
   /*argc = 3;

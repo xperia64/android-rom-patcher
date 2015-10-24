@@ -1,6 +1,6 @@
 package com.xperia64.rompatcher.javapatchers.nsmbe.patcher;
 
-import com.xperia64.rompatcher.javapatchers.nsmbe.AlreadyEditingException;
+//import com.xperia64.rompatcher.javapatchers.nsmbe.AlreadyEditingException;
 import com.xperia64.rompatcher.javapatchers.nsmbe.ROM;
 import com.xperia64.rompatcher.javapatchers.nsmbe.dsfilesystem.DSFile;
 
@@ -54,8 +54,8 @@ public class RealPatch {
 
     
     byte filestartByte = fs.readByte();
-    try
-    {
+    /*try
+    {*/
         while (filestartByte == 1)
         {
             String fileName = readString(fs);
@@ -85,12 +85,12 @@ public class RealPatch {
                 //fileCount++;
             }
         }
-    }
+    /*}
     catch (AlreadyEditingException e)
     {
         //MessageBox.Show(String.Format(LanguageManager.Get("Patch", "Error"), fileCount), LanguageManager.Get("General", "Completed"), MessageBoxButtons.OK, MessageBoxIcon.Error);
     	System.out.println("Error RealPatch: "+e.getCause()+" "+e.getMessage()+" "+e.getStackTrace()[0].getLineNumber()+" "+e.getStackTrace()[0].getFileName());
-    }
+    }*/
     fs.close();
     //MessageBox.Show(String.Format(LanguageManager.Get("Patch", "ImportReady"), fileCount), LanguageManager.Get("General", "Completed"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 }

@@ -38,7 +38,7 @@
 
     android:layout_height="wrap_content" 
 
-    android:text="No items"
+    android:text=""
 
  />
 

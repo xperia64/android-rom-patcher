@@ -23,7 +23,7 @@ public class Globals {
 	public static String fileToPatch="";
 	public static String patchToApply="";
 	public static boolean mode=false;
-	public static boolean didAnAsm = false;
+	public static boolean asar=false;
 	public static String msg="";
 	// Patch types in no real order
 	public static final int TYPE_UPS=0;

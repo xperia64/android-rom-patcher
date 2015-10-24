@@ -4,7 +4,9 @@ extern int romlen;
 extern const char * openromerror;
 bool openrom(const char * filename, bool confirm=true);
 void closerom(bool save=true);
-
+#ifndef stricmp
+#define stricmp(...) strcasecmp(__VA_ARGS__)
+#endif
 enum mapper_t {
 	invalid_mapper,
 	lorom,

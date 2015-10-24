@@ -42,7 +42,7 @@ public class FileBrowserActivity extends ListActivity {
 	private List<String> path = null;
 	private String rootsd=Environment.getExternalStorageDirectory().getAbsolutePath();
 	private String tmpitem="ROOT";
-	private String extensions = "*.aps*.ips*.ups*.xdelta*.xdelta3*.vcdiff*.bps*.bsdiff*.ppf*.patch*.dps*.asm*.dldi*.xpc*";
+	private String extensions = "*.aps*.ips*.ups*.xdelta*.xdelta3*.vcdiff*.bps*.bsdiff*.ppf*.patch*.dps*.asm*.dldi*.xpc*.nmp*";
 	TextView myPath;
 
 
@@ -161,7 +161,7 @@ public class FileBrowserActivity extends ListActivity {
 
 	@Override
 
-	protected void onListItemClick(ListView l, View v, int position, long id) {
+	protected void onListItemClick(ListView l, View v, final int position, long id) {
 
 
 		File file = new File(path.get(position));
@@ -213,10 +213,38 @@ public class FileBrowserActivity extends ListActivity {
 					 setResult(RESULT_OK,returnIntent);  
 					 this.finish();
 				}else{
+					if(path.get(position).toLowerCase(Locale.US).endsWith(".asm"))
+					{
+						AlertDialog dialog = new AlertDialog.Builder(this).create();
+					    dialog.setTitle(getResources().getString(R.string.warning));
+					    dialog.setMessage("ROM Patcher cannot determine if this is a Asar or Non-Asar ASM patch.\nPlease select:");
+					    dialog.setCancelable(false);
+					    dialog.setButton(DialogInterface.BUTTON_POSITIVE, "Asar", new DialogInterface.OnClickListener() {
+					        public void onClick(DialogInterface dialog, int buttonId) {
+					        	Globals.asar=true;
+					        	Globals.patchToApply=path.get(position);
+								 Intent returnIntent = new Intent();
+								 setResult(RESULT_OK,returnIntent);
+								 FileBrowserActivity.this.finish();
+					        }
+					    });
+					    dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Non-Asar", new DialogInterface.OnClickListener() {
+					        public void onClick(DialogInterface dialog, int buttonId) {
+					          Globals.asar=false;
+					          Globals.patchToApply=path.get(position);
+								 Intent returnIntent = new Intent();
+								 setResult(RESULT_OK,returnIntent);  
+								 FileBrowserActivity.this.finish();
+					          
+					        }
+					    });
+					    dialog.show();
+					}else{
 					Globals.patchToApply=path.get(position);
 					 Intent returnIntent = new Intent();
 					 setResult(RESULT_OK,returnIntent);  
 					 this.finish();
+					}
 				}
 			}
 

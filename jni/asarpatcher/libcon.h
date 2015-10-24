@@ -1,4 +1,7 @@
 #pragma once
+#ifndef stricmp
+#define stricmp(...) strcasecmp(__VA_ARGS__)
+#endif
 void libcon_init(int argc, char * argv[], const char * usage);
 const char * libcon_require(const char * desc);
 const char * libcon_require_filename(const char * desc);
