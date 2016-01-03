@@ -1,4 +1,4 @@
-﻿package com.xperia64.rompatcher.javapatchers.nsmbe;
+package com.xperia64.rompatcher.javapatchers.nsmbe;
 
 /*import com.xperia64.rompatcher.javapatchers.nsmbe.dsfilesystem.DSFile;
 

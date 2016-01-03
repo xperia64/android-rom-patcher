@@ -1,4 +1,4 @@
-﻿package com.xperia64.rompatcher.javapatchers.nsmbe.dsfilesystem;
+package com.xperia64.rompatcher.javapatchers.nsmbe.dsfilesystem;
 
 import com.xperia64.rompatcher.javapatchers.nsmbe.AlreadyEditingException;
 
