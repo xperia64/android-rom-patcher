@@ -11,6 +11,7 @@
         android:id="@+id/romButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/patchButton"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:text="@string/choose_rom" />
@@ -19,7 +20,9 @@
         android:id="@+id/romText"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/romButton"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
         android:layout_toLeftOf="@+id/romButton"
         android:text="@string/choose_rom"
         android:textAppearance="?android:attr/textAppearanceLarge" />
@@ -36,9 +39,9 @@
         android:id="@+id/patchText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/patchButton"
         android:layout_alignBottom="@+id/patchButton"
         android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/patchButton"
         android:layout_toLeftOf="@+id/patchButton"
         android:text="@string/choose_patch"
         android:textAppearance="?android:attr/textAppearanceLarge" />
@@ -104,7 +107,7 @@
 	       android:id="@+id/ignoreCRC"
 	       android:layout_width="wrap_content"
 	       android:layout_height="wrap_content"
-	       android:layout_below="@+id/patchText"
+	       android:layout_below="@+id/patchButton"
 	       android:text="@string/ignoreChks" />
 
 	   <ImageButton

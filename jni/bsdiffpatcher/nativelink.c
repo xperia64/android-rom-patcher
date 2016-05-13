@@ -15,7 +15,7 @@ int Java_com_xperia64_rompatcher_MainActivity_bsdiffPatchRom(JNIEnv * env, jobje
 	FILE*  InFile = fopen(szPatchPath, "rb");
 	FILE*  SrcFile = fopen(szRomPath, "rb");
 	FILE* OutFile = fopen(szOutputFile, "wb");
-	int r = bspatch_perform(szRomPath, szOutputFile, szPatchPath);
+	int r = bspatch_perform((char*)szRomPath, (char*)szOutputFile, (char*)szPatchPath);
 	(*env)->ReleaseStringUTFChars(env, romPath, szRomPath); 
 	(*env)->ReleaseStringUTFChars(env, patchPath, szPatchPath); 
 	(*env)->ReleaseStringUTFChars(env, outputFile, szOutputFile); 

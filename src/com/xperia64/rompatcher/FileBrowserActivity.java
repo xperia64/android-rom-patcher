@@ -93,15 +93,26 @@ public class FileBrowserActivity extends ListActivity {
 		{
 		if (files.length>0){
 			
-				System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
 				Arrays.sort(files, new FileComparator());
 			
 
-			if(!dirPath.equals("/"))
+			if(!dirPath.equals("/")&& !(dirPath.equals("/storage/") && !(new File(File.separator).canRead())))
 			{
 				item.add("../");
-				tmpitem=f.getParent();
-				path.add(f.getParent());
+				// Thank you Marshmallow.
+				// Disallowing access to /storage/emulated has now prevent billions of hacking attempts daily.
+				if(new File(f.getParent()).canRead())
+				{
+					tmpitem=f.getParent();
+					path.add(f.getParent());
+				}else if (new File("/").canRead()){
+					path.add("/");
+					tmpitem="/";
+				}else{
+					path.add("/storage/");
+					tmpitem = "/storage/";
+				}
+				
 			}else{tmpitem="ROOT";}
 
 
@@ -141,10 +152,19 @@ public class FileBrowserActivity extends ListActivity {
 					item.add(file.getName()+"/");}}
 
 		}else{
-			if(!dirPath.equals("/")){
+			if(!dirPath.equals("/")&& !(dirPath.equals("/storage/") && !(new File(File.separator).canRead()))){
 				item.add("../");
-				tmpitem=f.getParent();
-				path.add(f.getParent());
+				if(new File(f.getParent()).canRead())
+				{
+					tmpitem=f.getParent();
+					path.add(f.getParent());
+				}else if (new File("/").canRead()){
+					path.add("/");
+					tmpitem="/";
+				}else{
+					path.add("/storage/");
+					tmpitem = "/storage/";
+				}
 
 			}else{
 				tmpitem="ROOT";
@@ -166,29 +186,34 @@ public class FileBrowserActivity extends ListActivity {
 
 		File file = new File(path.get(position));
 		if (file.isDirectory())
-
 		{
-
 			if(file.canRead()){
 
 				getDir(path.get(position));
 
-			} else
-
+			} else if (file.getAbsolutePath().equals("/storage/emulated")&&
+					((new File("/storage/emulated/0").exists()&&new File("/storage/emulated/0").canRead())||
+							(new File("/storage/emulated/legacy").exists()&&new File("/storage/emulated/legacy").canRead())||
+							(new File("/storage/self/primary").exists()&&new File("/storage/self/primary").canRead())))
 			{
-
+				if(new File("/storage/emulated/0").exists()&&new File("/storage/emulated/0").canRead())
+				{
+					getDir("/storage/emulated/0");
+				}else if((new File("/storage/emulated/legacy").exists()&&new File("/storage/emulated/legacy").canRead())){
+					getDir("/storage/emulated/legacy");
+				}else{
+					getDir("/storage/self/primary");
+				}
+			}else
+			{
+				System.out.println(file.getAbsolutePath());
+			
 				new AlertDialog.Builder(this)
-
 				.setIcon(R.drawable.icon)
-
 				.setTitle("[" + file.getName() + "] "+getResources().getString(R.string.cantRead))
-
 				.setPositiveButton("OK", 
 
-						new DialogInterface.OnClickListener() {
-
-
-
+					new DialogInterface.OnClickListener() {
 					@Override
 
 					public void onClick(DialogInterface dialog, int which) {

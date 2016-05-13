@@ -45,9 +45,11 @@ int dpspatch(int argc, char **argv) {
       fseek(fin, 0, SEEK_END);
      
       if (ftell(fin) != original_size) {
-          printf("%08x %08x\n", ftell(fin), original_size);
+        #ifdef DEBUG
+		  printf("%08x %08x\n", ftell(fin), original_size);
           printf("Size of original rom is incorrect, please make sure you use an original untrimmed rom.\n");
-    #ifdef WINDOWS
+		#endif
+	#ifdef WINDOWS
           sleep(100);
     #endif
           fclose(fin);

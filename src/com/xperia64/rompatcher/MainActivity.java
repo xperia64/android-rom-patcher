@@ -20,6 +20,10 @@ package com.xperia64.rompatcher;
 
 import com.google.common.io.Files;
 import com.xperia64.rompatcher.R;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
+
 import com.xperia64.rompatcher.javapatchers.APSGBAPatcher;
 import com.xperia64.rompatcher.javapatchers.nsmbe.ROM;
 import com.xperia64.rompatcher.javapatchers.nsmbe.dsfilesystem.NitroROMFilesystem;
@@ -35,8 +39,13 @@ import java.util.Locale;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.Log;
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -48,7 +57,9 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 //import android.net.Uri;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.View;
@@ -361,8 +372,135 @@ public class MainActivity extends Activity {
 				
 			}
 		});
+		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M)
+		{
+			// Uggh.
+			requestPermissions();
+		}
 	}
 	
+	final int PERMISSION_REQUEST=178;
+    final int NUM_PERMISSIONS = 2;
+    public void requestPermissions()
+    {
+    	if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+    			||ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+
+    // Should we show an explanation?
+    		if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+    				||ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+    			new AlertDialog.Builder(this).setTitle("Permissions")
+    			.setMessage("ROM Patcher needs to be able to:\n"
+    					+ "Read your storage to read ROMs/patches\n\n"
+    					+ "Write to your storage to save patched ROMs\n\n")
+    					
+    					.setPositiveButton("OK", new OnClickListener(){
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								actuallyRequestPermissions();
+								
+							}
+    						
+    					}).setNegativeButton("Cancel", new OnClickListener(){
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								new AlertDialog.Builder(MainActivity.this).setTitle("Error")
+								.setMessage("ROM Patcher cannot proceed without these permissions")
+								.setPositiveButton("OK", new OnClickListener(){
+
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+											MainActivity.this.finish();
+									}
+									
+								}).setCancelable(false).show();
+								
+							}
+    						
+    					}).setCancelable(false).show();
+    			
+        // Show an expanation to the user *asynchronously* -- don't block
+        // this thread waiting for the user's response! After the user
+        // sees the explanation, try again to request the permission.
+
+    		} else {
+
+        // No explanation needed, we can request the permission.
+    			actuallyRequestPermissions();
+        
+
+        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+        // app-defined int constant. The callback method gets the
+        // result of the request.
+    	}
+    	}/*else{
+    		yetAnotherInit();
+    	}*/
+    }
+    
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+	public void actuallyRequestPermissions()
+    {
+    	ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},PERMISSION_REQUEST);
+    }
+    @SuppressLint("NewApi")
+	@Override
+    public void onRequestPermissionsResult(int requestCode,
+            String permissions[], int[] grantResults) {
+    	super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case PERMISSION_REQUEST: {
+                // If request is cancelled, the result arrays are empty.
+            	boolean good = true;
+            	if(permissions.length != NUM_PERMISSIONS || grantResults.length != NUM_PERMISSIONS)
+            	{
+            		good = false;
+            	}
+            	
+                for(int i = 0; i<grantResults.length && good; i++)
+                {
+                	if(grantResults[i]!=PackageManager.PERMISSION_GRANTED)
+                	{
+                		good = false;
+                	}
+                }
+                if(!good) {
+
+                    // permission denied, boo! Disable the app.
+                	new AlertDialog.Builder(MainActivity.this).setTitle("Error")
+					.setMessage("ROM Patcher cannot proceed without these permissions")
+					.setPositiveButton("OK", new OnClickListener(){
+
+						@Override
+						public void onClick(DialogInterface dialog,
+								int which) {
+							MainActivity.this.finish();
+						}
+						
+					}).setCancelable(false).show();
+                }else{
+                	if(!Environment.getExternalStorageDirectory().canRead())
+                	{
+                		// Buggy emulator? Try restarting the app
+                		AlarmManager alm = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+                		alm.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, PendingIntent.getActivity(this, 237462, new Intent(this, MainActivity.class), Intent.FLAG_ACTIVITY_NEW_TASK));
+                		System.exit(0);
+                	}
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
 	private void patchCheck()
 	{
 		// Just try to interpret the following if statement. I dare you.
@@ -469,11 +607,11 @@ public class MainActivity extends Activity {
 									msg=parseError(e, Globals.TYPE_XDELTA1);
 								}
 							}else{
-							int e = xdelta3PatchRom(Globals.fileToPatch, Globals.patchToApply, Globals.fileToPatch+".new");
-							if(e!=0)
-							{
-								msg=parseError(e, Globals.TYPE_XDELTA3);
-							}
+								int e = xdelta3PatchRom(Globals.fileToPatch, Globals.patchToApply, Globals.fileToPatch+".new");
+								if(e!=0)
+								{
+									msg=parseError(e, Globals.TYPE_XDELTA3);
+								}
 							}
 						}else if(Globals.patchToApply.toLowerCase(Locale.US).endsWith(".bps")){
 							int e = bpsPatchRom(Globals.fileToPatch, Globals.patchToApply, Globals.fileToPatch+".new", r ? 1 : 0);
@@ -664,7 +802,7 @@ public class MainActivity extends Activity {
 									{
 										AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
 								    	b.setTitle(getResources().getString(R.string.drmwarning));
-								    	b.setIcon(getResources().getDrawable(R.drawable.icon_pro));
+								    	b.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.icon_pro, null));
 								    	b.setMessage(getResources().getString(R.string.drmwarning_desc));
 								    	b.setCancelable(false);
 								    	b.setNegativeButton(getResources().getString(android.R.string.cancel), new OnClickListener(){@Override public void onClick(DialogInterface arg0, int arg1) {}});
@@ -808,8 +946,7 @@ public class MainActivity extends Activity {
 				    });
 				    if(Globals.msg.equals(getResources().getString(R.string.success))) // Don't annoy people who did something wrong even further
 				    {
-				    final SharedPreferences prefs = PreferenceManager
-				            .getDefaultSharedPreferences(MainActivity.this);
+				    final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
 				    int x = prefs.getInt("purchaseNag", 5);
 				    if(x!=-1)
 				    {
@@ -821,7 +958,7 @@ public class MainActivity extends Activity {
 				    {
 				    	
 				    	prefs.edit().putInt("purchaseNag", 0).commit();
-				    	runOnUiThread(new Runnable() {
+				    	/*runOnUiThread(new Runnable() {
 					        public void run() {
 				    	AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
 				    	b.setTitle("Like ROM Patcher?");
@@ -833,7 +970,7 @@ public class MainActivity extends Activity {
 
 							@Override
 							public void onClick(DialogInterface arg0, int arg1) {
-								try {
+								try  {
 								    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.xperia64.rompatcher.donation")));
 								} catch (android.content.ActivityNotFoundException anfe) {
 								    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=com.xperia64.rompatcher.donation")));
@@ -842,7 +979,7 @@ public class MainActivity extends Activity {
 				    		});
 				    			b.create().show();
 					        	}
-				    		}); // end of UIThread
+				    		}); // end of UIThread*/
 				    	}else{
 				    		prefs.edit().putInt("purchaseNag", x+1).commit();
 				    	}

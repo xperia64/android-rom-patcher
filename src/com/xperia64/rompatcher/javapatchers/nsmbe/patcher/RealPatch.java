@@ -9,7 +9,7 @@ import java.io.RandomAccessFile;
 
 public class RealPatch {
 
-	public static final String patchHeader = "NSMBe4 Exported Patch";
+	private static final String patchHeader = "NSMBe4 Exported Patch";
 	
 	private static String readString(RandomAccessFile fs) throws IOException
 	{
@@ -17,10 +17,10 @@ public class RealPatch {
 	    fs.read(tmp);
 	    return  new String(tmp, "US-ASCII");
 	}
-	public static int little2bigi(int i) {
+	private static int little2bigi(int i) {
         return (i&0xff)<<24 | (i&0xff00)<<8 | (i&0xff0000)>>8 | (i>>24)&0xff;
     }
-	public static short little2bigs(short s) {
+	private static short little2bigs(short s) {
         return (short) ((s&0xff)<<8 | (s&0xff00)>>8);
     }
 	public static void patch(String s, Object editor) throws Exception

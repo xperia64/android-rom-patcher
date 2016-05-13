@@ -1,9 +1,9 @@
 /* 
 	Native JNI linkage
 						*/
-#import "nall/bps/patch.hpp"
-#import "nall/bps/linear.hpp"
-#import "nall/bps/delta.hpp"
+#include "nall/bps/patch.hpp"
+#include "nall/bps/linear.hpp"
+#include "nall/bps/delta.hpp"
 #ifdef ANDROID
 #include <jni.h>
 #endif

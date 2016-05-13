@@ -109,8 +109,6 @@ import java.util.ArrayList;
             return what;
         }
 
-
-
         public void DSFileMoved(DSFile f) throws Exception
         {
         }
@@ -130,6 +128,7 @@ import java.util.ArrayList;
 		public void save() throws IOException, Exception {}
 		public void close() throws Exception {}
 
+		// Note: This is in the original C# version. Seems important.
         public String getRomPath()
         {
             return "Wadafuq.";

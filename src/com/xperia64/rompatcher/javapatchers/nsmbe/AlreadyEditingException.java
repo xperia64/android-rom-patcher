@@ -29,7 +29,6 @@ import com.xperia64.rompatcher.javapatchers.nsmbe.dsfilesystem.DSFile;
         {
         	super("Already editing file: " + f.name());
             this.f = f;
-            
         }
 
     }

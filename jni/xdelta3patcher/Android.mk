@@ -12,6 +12,6 @@ LOCAL_SRC_FILES := \
 xdelta3.c \
 nativelink.c 
 
-LOCAL_CFLAGS := -O3
+LOCAL_CFLAGS := -O2 -std=c99 -DHAVE_CONFIG_H
 
 include $(BUILD_SHARED_LIBRARY)  

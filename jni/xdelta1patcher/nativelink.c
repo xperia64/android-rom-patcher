@@ -15,9 +15,9 @@ int Java_com_xperia64_rompatcher_MainActivity_xdelta1PatchRom(JNIEnv * env, jobj
 	filez = malloc(sizeof(gchar*) * 5);
 	filez[0]="xdelta1"; // argv
 	filez[1]="patch";
-	filez[2]=szPatchPath;
-	filez[3]=szRomPath;
-	filez[4]=szOutputFile;
+	filez[2]=(gchar*)szPatchPath;
+	filez[3]=(gchar*)szRomPath;
+	filez[4]=(gchar*)szOutputFile;
 	int r = (int)main(5,filez);
 	(*env)->ReleaseStringUTFChars(env, romPath, szRomPath); 
 	(*env)->ReleaseStringUTFChars(env, patchPath, szPatchPath); 

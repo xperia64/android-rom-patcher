@@ -6,6 +6,8 @@
 #include <android/log.h>
 #include <stdio.h>
 
+extern int code(int encode, FILE* InFile, FILE* SrcFile, FILE* OutFile, int BufSize);
+
 int Java_com_xperia64_rompatcher_MainActivity_xdelta3PatchRom(JNIEnv * env, jobject this, jstring romPath, jstring patchPath, jstring outputFile)
 {
 	jboolean isCopy;
