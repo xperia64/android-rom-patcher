@@ -1,144 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- German Translation by Dustin Stratmann <stratmanndustin@gmail.com> -->
 <resources>
     <string name="app_name">ROM Patcher</string>
-    <string name="cantRead">folder can\'t be read!</string>
-    <string name="choose_rom">Choose ROM</string>
-    <string name="choose_patch">Choose patch</string>
+    <string name="cantRead">Verzeichnis kann nicht gelesen werden!</string>
+    <string name="choose_rom">ROM auswählen</string>
+    <string name="choose_patch">Patch auswählen</string>
     <string name="patch">Patch</string>
-    <string name="bkup_rom">Backup ROM</string>
-    <string name="bkup_rom_desc">Keeps original ROM file as ROMname.bak after patching</string>
-    <string name="rename1">Rename patched ROM</string>
-    <string name="rename2">Rename patched ROM to: </string>
-    <string name="fileExt">Automatically add file extension</string>
-    <string name="rename_desc">Renames ROM after patching to filename typed below. The file extension checkbox will automatically add the file extension of the original file to the filename typed below.</string>
-    <string name="ignoreChks">Ignore checksum errors</string>
-    <string name="ignoreChks_desc">Ignore file verification errors. If a checksum, CRC32, or validation error appears, try checking this box. This setting may break your files</string>
-    <string name="warning">Warning</string>
-    <string name="warning_desc">A backup, output, or required temporary file already exists. Overwrite?</string>
-    <string name="zip_warning_desc">The file you are trying to patch looks like a zip file. You probably want to extract it first. Patch anyway?</string>
-    <string name="nopatch">Patching canceled</string>
-    <string name="wait">Please wait</string>
-    <string name="wait_desc">Patching rom…</string>
-    <string name="success">Patching successful.</string>
-    <string name="fnf">File not found.</string>
-    <string name="nagInfo">More Info</string>
-    <string name="nagMsg">Consider purchasing ROM Patcher (Donation) to support future development</string>
+    <string name="bkup_rom">ROM sichern</string>
+    <string name="bkup_rom_desc">Speichert die ursprüngliche ROM-Datei nach dem Patchen als ROMname.bak</string>
+    <string name="rename1">Gepatchten ROM umbenennen</string>
+    <string name="rename2">Gepatchten ROM umbenennen als: </string>
+    <string name="fileExt">Dateiendung automatisch hinzufügen</string>
+    <string name="rename_desc">Benennt gepatchten ROM nach dem unten angegebenen Dateinamen. Das Dateiendungs-Kontrollkästchen fügt automatisch die Dateiendung der Originaldatei zum angegebenen Dateinamen hinzu.</string></string>
+    <string name="ignoreChks">Prüfsummenfehler ignorieren</string>
+    <string name="ignoreChks_desc">Ignoriert Dateiüberprüfungsfehler. Wenn ein Prüfsummen, CRC32 oder Verifizierungsfehler auftritt, versuche es mit dieser Einstellung. Diese Einstellung kann deine Dateien beschädigen.</string>
+    <string name="warning">Warnung</string>
+    <string name="warning_desc">Eine Backup-, Ausgabe- oder benötigte temporäre Datei existiert bereits. Überschreiben?</string>
+    <string name="zip_warning_desc">Die Datei, die du versuchst, zu patchen, scheint eine ZIP-Datei zu sein. Du solltest sie voher auspacken. Trotzdem patchen?</string>
+    <string name="nopatch">Patchen abgebrochen</string>
+    <string name="wait">Bitte warten</string>
+    <string name="wait_desc">Patche ROM…</string>
+    <string name="success">Patchen erfolgreich.</string>
+    <string name="fnf">Datei nicht gefunden.</string>
+    <string name="nagInfo">Weitere Informationen</string>
+    <string name="nagMsg">Bitte kaufe ROM Patcher (Donation), um die weitere Entwicklung zu unterstützen.</string>
     <!-- UPS Errors -->
-    <string name="upsNegativeOne">UPS: Input file cannot be opened.</string>
-    <string name="upsNegativeTwo">UPS: Output file cannot be opened.</string>
-    <string name="upsNegativeThree">UPS: Patch file cannot be opened.</string>
-    <string name="upsNegativeFour">UPS: Patch file size is too small.</string>
-    <string name="upsNegativeFive">UPS: Patch CRC32 is invalid.</string>
-    <string name="upsNegativeSix">UPS: Patch header is invalid.</string>
-    <string name="upsNegativeSeven">UPS: Input file size and/or CRC32 invalid.</string>
-    <string name="upsDefault">UPS: Unknown error: </string>
+    <string name="upsNegativeOne">UPS: Eingabedatei kan nicht geöffnet werden.</string>
+    <string name="upsNegativeTwo">UPS: Ausgabedatei kann nicht geöffnet werden.</string>
+    <string name="upsNegativeThree">UPS: Patchdatei kann nicht geöffnet werden.</string>
+    <string name="upsNegativeFour">UPS: Patchdatei ist zu klein.</string>
+    <string name="upsNegativeFive">UPS: Ungültige CRC32</string>
+    <string name="upsNegativeSix">UPS: Patch-Header ist ungültig.</string>
+    <string name="upsNegativeSeven">UPS: Ungültige Eingabedateigröße und/oder CRC32.</string>
+    <string name="upsDefault">UPS: Unbekannter Fehler: </string>
     <!-- End UPS Errors -->
 	<!-- XDELTA1 Errors -->
-	<string name="xdelta1Two">XDELTA1: Couldn\'t initialize edsio.</string>
-	<string name="xdelta1Three">XDELTA1: Illegal maxmem arguments.</string>
-	<string name="xdelta1Four">XDELTA1: Illegal arguments.</string>
-	<string name="xdelta1Five">XDELTA1: Wrong number of arguments (5).</string>
-	<string name="xdelta1Six">XDELTA1: Wrong number of arguments (6).</string>
-	<string name="xdelta1Seven">XDELTA1: Could not process patch.</string>
-	<string name="xdelta1Eight">XDELTA1: Opening output file failed.</string>
-	<string name="xdelta1Nine">XDELTA1: Compression error.</string>
-	<string name="xdelta1Ten">XDELTA1: Patch seek error.</string>
-	<string name="xdelta1Eleven">XDELTA1: File length error.</string>
-	<string name="xdelta1Twelve">XDELTA1: Apply delta error.</string>
-	<string name="xdelta1Thirteen">XDELTA1: Closing error.</string>
-    <string name="xdelta1Default">XDELTA1: Unknown error: </string>
+	<string name="xdelta1Two">XDELTA1: edsio kann nicht initialisiert werden.</string>
+	<string name="xdelta1Three">XDELTA1: Ungültige "maxmem" Übergabewerte.</string>
+	<string name="xdelta1Four">XDELTA1: Ungültige Übergabewerte.</string>
+	<string name="xdelta1Five">XDELTA1: Falsche Anzahl der Übergabewerte (5).</string>
+	<string name="xdelta1Six">XDELTA1: Falsche Anzahl der Übergabewerte (6).</string>
+	<string name="xdelta1Seven">XDELTA1: Kann Patch nicht verarbeiten.</string>
+	<string name="xdelta1Eight">XDELTA1: Ausgabedatei kann nicht geöffnet werden..</string>
+	<string name="xdelta1Nine">XDELTA1: Kompressionsfehler.</string>
+	<string name="xdelta1Ten">XDELTA1: Patchsuchfehler.</string>
+	<string name="xdelta1Eleven">XDELTA1: Dateilängenfehler.</string>
+	<string name="xdelta1Twelve">XDELTA1: "Apply delta"-Fehler.</string>
+	<string name="xdelta1Thirteen">XDELTA1: Abschlussfehler.</string>
+    <string name="xdelta1Default">XDELTA1: Unbekannter Fehler: </string>
 	<!-- End XDELTA1 Errors -->
     <!-- XDELTA3 Errors -->
-    <string name="xdelta3NegativeSeventeenThousandSevenHundredTen">XDELTA3: Internal error.</string>
-	<string name="xdelta3NegativeSeventeenThousandSevenHundredEleven">XDELTA3: Invalid config.</string>
-	<string name="xdelta3NegativeSeventeenThousandSevenHundredTwelve">XDELTA3: Input/output error. </string>
-	<string name="xdelta3Default">XDELTA3: Unknown error: </string>
+    <string name="xdelta3NegativeSeventeenThousandSevenHundredTen">XDELTA3: Interner Fehler.</string>
+	<string name="xdelta3NegativeSeventeenThousandSevenHundredEleven">XDELTA3: Ungültige Einstellungen.</string>
+	<string name="xdelta3NegativeSeventeenThousandSevenHundredTwelve">XDELTA3: Eingabe/Ausgabe-Fehler. </string>
+	<string name="xdelta3Default">XDELTA3: Unbekannter Fehler: </string>
 	<!-- End XDELTA3 Errors -->
 	<!-- BPS Errors -->
-	<string name="bpsOne">BPS: Broken error code.</string>
-	<string name="bpsNegativeOne">BPS: Patch is too small.</string>
-	<string name="bpsNegativeTwo">BPS: Patch header is invalid.</string>
-	<string name="bpsNegativeThree">BPS: Source file is too small.</string>
-	<string name="bpsNegativeFour">BPS: Target file is too small.</string>
-	<string name="bpsNegativeFive">BPS: Source checksum is invalid.</string>
-	<string name="bpsNegativeSix">BPS: Patch checksum is invalid.</string>
-	<string name="bpsNegativeSeven">BPS: Patch checksum is invalid.</string>
-	<string name="bpsNegativeEight">BPS: Unknown patching error: </string>
-	<string name="bpsDefault">BPS: Unknown error: </string>
+	<string name="bpsOne">BPS: Beschädigter Fehlercode.</string>
+	<string name="bpsNegativeOne">BPS: Patch ist zu klein.</string>
+	<string name="bpsNegativeTwo">BPS: Patchheader ist ungültig.</string>
+	<string name="bpsNegativeThree">BPS: Quelldatei ist zu klein.</string>
+	<string name="bpsNegativeFour">BPS: Zieldatei ist zu klein.</string>
+	<string name="bpsNegativeFive">BPS: Prüfsumme der Quelle ist ungültig.</string>
+	<string name="bpsNegativeSix">BPS: Prüfsumme des Patches ist ungültig.</string>
+	<string name="bpsNegativeSeven">BPS: Prüfsumme des Patches ist ungültig.</string>
+	<string name="bpsNegativeEight">BPS: Unbekannter Fehler beim Patchen: </string>
+	<string name="bpsDefault">BPS: Unbekannter Fehler: </string>
 	<!-- End BPS Errors -->
 	<!-- BSDIFF Errors -->
-	<string name="bsdiffOne">BSDIFF: Read/Write error.</string>
-	<string name="bsdiffTwo">BSDIFF: Corrupt patch.</string>
-	<string name="bsdiffDefault">BSDIFF: Unknown error: </string>
+	<string name="bsdiffOne">BSDIFF: Lese-/Schreibfehler.</string>
+	<string name="bsdiffTwo">BSDIFF: Patch beschädigt.</string>
+	<string name="bsdiffDefault">BSDIFF: Unbekannter Fehler: </string>
 	<!-- End BSDIFF Errors -->
 	<!-- PPF Errors -->
-	<string name="ppfOne">PPF: Broken error code.</string>
-	<string name="ppfNegativeOne">PPF2: Incorrect file size.</string>
-	<string name="ppfNegativeTwo">PPF2: Binblock/Patchvalidation failed.</string>
-	<string name="ppfNegativeThree">PPF3: Binblock/Patchvalidation failed.</string>
-	<string name="ppfNegativeFour">PPF3: No undo data available. (you shouldn\'t be seeing this)</string>
-	<string name="ppfDefault">PPF: Unknown error: </string>
+	<string name="ppfOne">PPF: Beschädigter Fehlercode.</string>
+	<string name="ppfNegativeOne">PPF2: Falsche Dateigröße.</string>
+	<string name="ppfNegativeTwo">PPF2: Binblock/Patchüberprüfung fehlgeschlagen.</string>
+	<string name="ppfNegativeThree">PPF3: Binblock/Patchüberprüfung fehlgeschlagen.</string>
+	<string name="ppfNegativeFour">PPF3: Keine "undo"-Daten verfügbar. (du solltest den Fehler nicht sehen)</string>
+	<string name="ppfDefault">PPF: Unbekannter Fehler: </string>
 	<!-- End PPF Errors -->
 	<!-- IPS Errors -->
-	<string name="ipsOne">IPS: Patching stopped for unknown reason.</string>
-	<string name="ipsNegativeOne">IPS: Error.</string>
-	<string name="ipsNegativeTwo">IPS: File type error.</string>
-	<string name="ipsNegativeThree">IPS: File opening error.</string>
-	<string name="ipsNegativeFour">IPS: File saving error.</string>
-	<string name="ipsNegativeFive">IPS: File read error.</string>
-	<string name="ipsNegativeSix">IPS: Processing error.</string>
-	<string name="ipsNegativeSeven">IPS: Offset error.</string>
-	<string name="ipsDefault">IPS: Unknown error: </string>
+	<string name="ipsOne">IPS: Patchen aus unbekannten Gründen gestoppt.</string>
+	<string name="ipsNegativeOne">IPS: Fehler.</string>
+	<string name="ipsNegativeTwo">IPS: Dateityp-Fehler.</string>
+	<string name="ipsNegativeThree">IPS: Fehler beim Öffnen.</string>
+	<string name="ipsNegativeFour">IPS: Fehler beim Speichern.</string>
+	<string name="ipsNegativeFive">IPS: Fehler beim Lesen.</string>
+	<string name="ipsNegativeSix">IPS: Fehler beim Anwenden.</string>
+	<string name="ipsNegativeSeven">IPS: Offset-Fehler.</string>
+	<string name="ipsDefault">IPS: Unbekannter Fehler: </string>
 	<!-- End IPS Errors -->
 	<!-- IPS32 Errors -->
-	<string name="ips32One">IPS32: Patching stopped for unknown reason.</string>
-	<string name="ips32NegativeOne">IPS32: Error.</string>
-	<string name="ips32NegativeTwo">IPS32: File type error.</string>
-	<string name="ips32NegativeThree">IPS32: File opening error.</string>
-	<string name="ips32NegativeFour">IPS32: File saving error.</string>
-	<string name="ips32NegativeFive">IPS32: File read error.</string>
-	<string name="ips32NegativeSix">IPS32: Processing error.</string>
-	<string name="ips32NegativeSeven">IPS32: Offset error.</string>
-	<string name="ips32Default">IPS32: Unknown error: </string>
+	<string name="ips32One">IPS32: Patchen aus unbekannten Gründen gestoppt.</string>
+	<string name="ips32NegativeOne">IPS32: Fehler.</string>
+	<string name="ips32NegativeTwo">IPS32: Dateityp-Fehler.</string>
+	<string name="ips32NegativeThree">IPS32: Fehler beim Öffnen.</string>
+	<string name="ips32NegativeFour">IPS32: Fehler beim Speichern.</string>
+	<string name="ips32NegativeFive">IPS32: Fehler beim Lesen.</string>
+	<string name="ips32NegativeSix">IPS32: Fehler beim Anwenden.</string>
+	<string name="ips32NegativeSeven">IPS32: Offset-Fehler.</string>
+	<string name="ips32Default">IPS32: Unbekannter Fehler: </string>
 	<!-- End IPS32 Errors -->
 	<!-- ECM Errors -->
-	<string name="ecmOne">ECM: Type count error.</string>
-	<string name="ecmTwo">ECM: Sector/literal error.</string>
-	<string name="ecmThree">ECM: ECM error.</string>
-	<string name="ecmFour">ECM: UNECM error.</string>
-	<string name="ecmFive">ECM: Usage error.</string>
-	<string name="ecmDefault">ECM: Unknown error: </string>
+	<string name="ecmOne">ECM: Fehler bei der Typenerfassung.</string>
+	<string name="ecmTwo">ECM: Sektor-Fehler.</string>
+	<string name="ecmThree">ECM: ECM-Fehler.</string>
+	<string name="ecmFour">ECM: UNECM-Fehler.</string>
+	<string name="ecmFive">ECM: Nutzungsfehler.</string>
+	<string name="ecmDefault">ECM: Unbekannter Fehler: </string>
 	<!-- End ECM Errors -->
 	<!-- DPS Errors -->
-	<string name="dpsNegativeOne">DPS: Bad parameters.</string>
-	<string name="dpsNegativeTwo">DPS: File size error.</string>
-	<string name="dpsNegativeThree">DPS: Patching successful, but patch is unstable.</string>
-	<string name="dpsDefault">DPS: Unknown error: </string>
+	<string name="dpsNegativeOne">DPS: Falsche Parameter.</string>
+	<string name="dpsNegativeTwo">DPS: Dateigrößen-Fehler.</string>
+	<string name="dpsNegativeThree">DPS: Patchen erfolgreich, aber Patch ist instabil.</string>
+	<string name="dpsDefault">DPS: Unbekannter Fehler: </string>
 	<!-- End DPS Errors -->
 	<!-- ASM Errors -->
-	<string name="asmDefault">ASM: Unknown error: </string>
+	<string name="asmDefault">ASM: Unbekannter Fehler: </string>
 	<!-- End ASM Errors -->
 	<!-- DLDI Errors -->
-	<string name="dldiDefault">DLDI: Unknown error: </string>
+	<string name="dldiDefault">DLDI: Unbekannter Fehler: </string>
 	<!-- End DLDI Errors -->
 	<!-- APSN64 Errors -->
-	<string name="apsn64Default">APSN64: Unknown error: </string>
+	<string name="apsn64Default">APSN64: Unbekannter Fehler: </string>
 	<!-- End APSN64 Errors -->
 	<!-- APSGBA Errors -->
-	<string name="apsgbaNegativeOne">APSGBA: Not a GBA APS Patch.</string>
-	<string name="apsgbaNegativeTwo">APSGBA: Bad CRC1</string>
-	<string name="apsgbaNegativeThree">APSGBA: Bad CRC2</string>
-	<string name="apsgbaNegativeFour">APSGBA: Bad CRC1&amp;CRC2</string>
-	<string name="apsgbaNegativeFive">APSGBA: I/O error</string>
-	<string name="apsgbaDefault">APSGBA: Unknown error: </string>
+	<string name="apsgbaNegativeOne">APSGBA: Kein GBA APS-Patch.</string>
+	<string name="apsgbaNegativeTwo">APSGBA: Ungültige CRC1</string>
+	<string name="apsgbaNegativeThree">APSGBA: Ungültige CRC2</string>
+	<string name="apsgbaNegativeFour">APSGBA: Ungültige CRC1&amp;CRC2</string>
+	<string name="apsgbaNegativeFive">APSGBA: E/A-Fehler</string>
+	<string name="apsgbaDefault">APSGBA: Unbekannter Fehler: </string>
 	<!-- End APSGBA Errors -->
 	<!-- XPC Errors -->
-	<string name="xpcDefault">XPC: Unknown error: </string>
+	<string name="xpcDefault">XPC: Unbekannter Fehler: </string>
 	<!-- End XPC Errors -->
 	<!-- NMP Errors -->
 	<string name="nmpDefault">NMP: %1$s (%2$d)</string>
 	<!-- End NMP Errors -->
-	<string name="errorDefault">Patch type invalid.</string>
-	<string name="drmwarning">Not Available</string>
-	<string name="drmwarning_desc">NMP support is only available in the donation version. View Google Play Page?</string>
+	<string name="errorDefault">Ungültiger Patchtyp.</string>
+	<string name="drmwarning">Nicht verfügbar</string>
+	<string name="drmwarning_desc">NMP Support ist nur in der Spendenversion verfügbar. Google Play-Seite ansehen?</string>
 </resources>
