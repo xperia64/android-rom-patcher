@@ -11,7 +11,7 @@
     <string name="rename1">Gepatchten ROM umbenennen</string>
     <string name="rename2">Gepatchten ROM umbenennen als: </string>
     <string name="fileExt">Dateiendung automatisch hinzufügen</string>
-    <string name="rename_desc">Benennt gepatchten ROM nach dem unten angegebenen Dateinamen. Das Dateiendungs-Kontrollkästchen fügt automatisch die Dateiendung der Originaldatei zum angegebenen Dateinamen hinzu.</string></string>
+    <string name="rename_desc">Benennt gepatchten ROM nach dem unten angegebenen Dateinamen. Das Dateiendungs-Kontrollkästchen fügt automatisch die Dateiendung der Originaldatei zum angegebenen Dateinamen hinzu.</string>
     <string name="ignoreChks">Prüfsummenfehler ignorieren</string>
     <string name="ignoreChks_desc">Ignoriert Dateiüberprüfungsfehler. Wenn ein Prüfsummen, CRC32 oder Verifizierungsfehler auftritt, versuche es mit dieser Einstellung. Diese Einstellung kann deine Dateien beschädigen.</string>
     <string name="warning">Warnung</string>

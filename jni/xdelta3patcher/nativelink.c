@@ -6,6 +6,11 @@
 #include <android/log.h>
 #include <stdio.h>
 
+#define  LOG_TAG    "xdelta3"
+
+//#define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
+#define  LOGE(...)
+
 extern int code(int encode, FILE* InFile, FILE* SrcFile, FILE* OutFile, int BufSize);
 
 int Java_com_xperia64_rompatcher_MainActivity_xdelta3PatchRom(JNIEnv * env, jobject this, jstring romPath, jstring patchPath, jstring outputFile)
@@ -17,11 +22,15 @@ int Java_com_xperia64_rompatcher_MainActivity_xdelta3PatchRom(JNIEnv * env, jobj
 	FILE*  InFile = fopen(szPatchPath, "rb");
 	FILE*  SrcFile = fopen(szRomPath, "rb");
 	FILE* OutFile = fopen(szOutputFile, "wb");
-	int rrrr = code (0, InFile, SrcFile, OutFile, 0x1500);
+	int ret = code (0, InFile, SrcFile, OutFile, 0x1500);
+	fclose(OutFile);
+	fclose(SrcFile);
+	fclose(InFile);
+
 	(*env)->ReleaseStringUTFChars(env, romPath, szRomPath); 
 	(*env)->ReleaseStringUTFChars(env, patchPath, szPatchPath); 
 	(*env)->ReleaseStringUTFChars(env, outputFile, szOutputFile); 
-	return rrrr;
+	return ret;
 }
 
 int code (int encode, FILE* InFile, FILE* SrcFile, FILE* OutFile, int BufSize)
@@ -80,13 +89,13 @@ int code (int encode, FILE* InFile, FILE* SrcFile, FILE* OutFile, int BufSize)
         {
             case XD3_INPUT:
             {
-                fprintf (stderr,"XD3_INPUT\n");
+                LOGE("XD3_INPUT\n");
                 continue;
             }
                 
             case XD3_OUTPUT:
             {
-                fprintf (stderr,"XD3_OUTPUT\n");
+                LOGE("XD3_OUTPUT\n");
                 r = fwrite(stream.next_out, 1, stream.avail_out, OutFile);
                 if (r != (int)stream.avail_out)
                     return r;
@@ -96,7 +105,7 @@ int code (int encode, FILE* InFile, FILE* SrcFile, FILE* OutFile, int BufSize)
                 
             case XD3_GETSRCBLK:
             {
-                fprintf (stderr,"XD3_GETSRCBLK %qd\n", source.getblkno);
+                LOGE("XD3_GETSRCBLK %qd\n", source.getblkno);
                 if (SrcFile)
                 {
                     r = fseek(SrcFile, source.blksize * source.getblkno, SEEK_SET);
@@ -111,25 +120,25 @@ int code (int encode, FILE* InFile, FILE* SrcFile, FILE* OutFile, int BufSize)
                 
             case XD3_GOTHEADER:
             {
-                fprintf (stderr,"XD3_GOTHEADER\n");
+                LOGE("XD3_GOTHEADER\n");
                 goto process;
             }
                 
             case XD3_WINSTART:
             {
-                fprintf (stderr,"XD3_WINSTART\n");
+                LOGE("XD3_WINSTART\n");
                 goto process;
             }
                 
             case XD3_WINFINISH:
             {
-                fprintf (stderr,"XD3_WINFINISH\n");
+                LOGE("XD3_WINFINISH\n");
                 goto process;
             }
                 
             default:
             {
-                fprintf (stderr,"!!! INVALID %s %d !!!\n",
+                LOGE("!!! INVALID %s %d !!!\n",
                          stream.msg, ret);
                 return ret;
             }

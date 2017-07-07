@@ -73,10 +73,9 @@ import android.text.Spanned;
 
 public class MainActivity extends Activity {
 
-
-	public static native int apsN64PatchRom(String romPath, String patchPath); 
-	public static native int ipsPatchRom(String romPath, String patchPath); 
-	public static native int ips32PatchRom(String romPath, String patchPath); 
+	public static native int apsN64PatchRom(String romPath, String patchPath);
+	public static native int ipsPatchRom(String romPath, String patchPath);
+	public static native int ips32PatchRom(String romPath, String patchPath);
 	public static native int upsPatchRom(String romPath, String patchPath, String outputFile, int jignoreChecksum);
 	public static native int xdelta1PatchRom(String romPath, String patchPath, String outputFile);
 	public static native int ecmPatchRom(String romPath, String outFile, int bkup);
@@ -490,7 +489,7 @@ public class MainActivity extends Activity {
                 	{
                 		// Buggy emulator? Try restarting the app
                 		AlarmManager alm = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-                		alm.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, PendingIntent.getActivity(this, 237462, new Intent(this, MainActivity.class), Intent.FLAG_ACTIVITY_NEW_TASK));
+                		alm.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, PendingIntent.getActivity(this, 237462, new Intent(this, MainActivity.class), PendingIntent.FLAG_ONE_SHOT));
                 		System.exit(0);
                 	}
                 }
